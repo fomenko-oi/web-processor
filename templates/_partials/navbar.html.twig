@@ -1,0 +1,18 @@
+<div class="lime-sidebar">
+    <div class="lime-sidebar-inner slimscroll">
+        <ul class="accordion-menu">
+            <li class="sidebar-title">App</li>
+            <li><a href="{{ app.request.baseUrl }}" class="active"><i class="material-icons">dashboard</i>Index page</a></li>
+            <li><a href="{{ path('contacts') }}"><i class="material-icons">contacts</i>Contacts</a></li>
+
+            <li class="sidebar-title">{% trans %}Sources{% endtrans %}</li>
+            <li>
+                <a href="{{ path('yandex.index') }}"><i class="material-icons">text_format</i>Yandex music<i class="material-icons has-sub-menu">keyboard_arrow_left</i></a>
+                <ul class="sub-menu">
+                    <li><a href="{{ path('yandex.song') }}">{% trans %}Download song{% endtrans %}</a></li>
+                    <li><a href="{{ path('yandex.album') }}">{% trans %}Download album{% endtrans %}</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>

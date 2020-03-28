@@ -1,0 +1,85 @@
+{% extends 'layout.html.twig' %}
+
+{% set title = 'Yandex music hight quality sound downloader - Online' %}
+{% set description = 'Download sound from music.yandex.ru in high quality.' %}
+{% set keywords = 'Yandex music downloader, yandex music high quality song downloader' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block meta %}
+    <meta name="description" content="{{ description }}">
+
+    <meta property="og:url" content="{{ app.request.uri }}" />
+    <meta property="og:site_name" content="Yandex music downloader" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="{{ asset('images/cloud.png') }}" />
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:description" content="{{ description }}" />
+    <meta property="og:locale" content="{{ app.request.uri }}" />
+
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "WebSite",
+            "url": "{{ app.request.uri }}",
+            "name": "{{ title }}",
+            "description": "{{ description }}",
+            "image": "{{ asset('images/cloud.png') }}",
+            "keywords": "{{ keywords }}",
+            "inLanguage": "{{ app.request.locale }}",
+            "dateCreated": 2020,
+            "isAccessibleForFree": true
+        }
+    </script>
+{% endblock %}
+
+{% block head %}
+    <style>
+        .info-image {
+            height: 200px;
+            background: url({{ asset('images/cloud_safe.png') }}) center center no-repeat;
+            background-size: contain;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="dashboard-info row">
+                        <div class="info-text col-md-6">
+                            <h5 class="card-title">Download Yandex.Music song by URL</h5>
+                            <p>Pass URL in input below and download the song.</p>
+
+                            <form action="{{ path('yandex.song.process') }}" class="mt-5" method="POST">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="url" placeholder="https://music.yandex.ru/album/10130567/track/63591534">
+                                        <input type="submit" class="btn btn-success" value="Download">
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                        <div class="info-image col-md-6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="dashboard-info row">
+                        <div class="info-text col-md-12">
+                            <h5 class="card-title">About</h5>
+                            <p>Pass URL in input below and download the song.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
