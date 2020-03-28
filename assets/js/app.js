@@ -1,7 +1,11 @@
 // any CSS you import will output into a single css file (app.css in this case)
 import '../css/app.css';
+import './bootstrap';
+import Vue from 'vue';
+import SongComponent from "@components/Services/Yandex/SongComponent";
 
-// Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
-// import $ from 'jquery';
+Vue.component('yandex-download-song-component', SongComponent);
 
-console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
+new Vue({
+    el: '#app',
+});

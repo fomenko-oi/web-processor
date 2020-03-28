@@ -41,6 +41,12 @@
             background-size: contain;
         }
     </style>
+
+    <script>
+        window.translations = {
+            'app.title': 'App trans title',
+        };
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -51,17 +57,10 @@
                     <div class="dashboard-info row">
                         <div class="info-text col-md-6">
                             <h5 class="card-title">Download Yandex.Music song by URL</h5>
-                            <p>Pass URL in input below and download the song.</p>
 
-                            <form action="{{ path('yandex.song.process') }}" class="mt-5" method="POST">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="url" placeholder="https://music.yandex.ru/album/10130567/track/63591534">
-                                        <input type="submit" class="btn btn-warning" value="Download">
-                                    </div>
-                                </div>
-
-                            </form>
+                            <div>
+                                <yandex-download-song-component />
+                            </div>
                         </div>
                         <div class="info-image col-md-6"></div>
                     </div>

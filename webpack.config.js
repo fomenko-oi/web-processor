@@ -1,4 +1,5 @@
 var Encore = require('@symfony/webpack-encore');
+var path = require('path');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -53,6 +54,8 @@ Encore
         config.corejs = 3;
     })
 
+    .enableVueLoader()
+
     // enables Sass/SCSS support
     //.enableSassLoader()
 
@@ -71,4 +74,13 @@ Encore
     //.addEntry('admin', './assets/js/admin.js')
 ;
 
-module.exports = Encore.getWebpackConfig();
+const config = Encore.getWebpackConfig();
+
+config.resolve.alias = {
+    '@': path.resolve(__dirname, 'assets/js'),
+    '@shared': path.resolve(__dirname, 'assets/js/Shared'),
+    '@components': path.resolve(__dirname, 'assets/js/Components'),
+    'vue$': 'vue/dist/vue.esm.js'
+};
+
+module.exports = config;

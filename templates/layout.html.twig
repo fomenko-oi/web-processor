@@ -29,6 +29,8 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <meta name="csrf-token" content="somenotrandomtokenyet">
+
     {{ encore_entry_link_tags('app') }}
 
     {% block head %}{% endblock %}
@@ -41,7 +43,7 @@
 {% include '_partials/rightbar.html.twig' %}
 
 <div class="lime-container">
-    <div class="lime-body">
+    <div class="lime-body" id="app">
         <div class="container">
             {% block content %}{% endblock %}
         </div>
