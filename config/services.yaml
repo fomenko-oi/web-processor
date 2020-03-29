@@ -28,7 +28,7 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Services\Music\Yandex\BaseClient:
         arguments:
-            $login: '%env(YANDEX_ACCOUNT)%'
+            $login: '%env(YANDEX_LOGIN)%'
             $password: '%env(YANDEX_PASSWORD)%'
             $cookieDir: '%kernel.project_dir%/storage/yandex'
             $proxy: '%env(YANDEX_PROXY)%'
