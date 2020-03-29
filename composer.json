@@ -2,10 +2,16 @@
     "type": "project",
     "license": "proprietary",
     "require": {
-        "php": "^7.2.5",
+        "php": "^7.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "duncan3dc/meta-audio": "^0.4.0",
+        "friendsofsymfony/jsrouting-bundle": "^2.5",
+        "guzzlehttp/guzzle": "^6.5",
+        "php-ffmpeg/php-ffmpeg": "^0.15.0",
+        "ramsey/uuid": "^4.0",
         "sensio/framework-extra-bundle": "^5.1",
+        "stormiix/php-eyed3": "dev-master",
         "symfony/asset": "5.0.*",
         "symfony/console": "5.0.*",
         "symfony/dotenv": "5.0.*",
@@ -16,6 +22,7 @@
         "symfony/http-client": "5.0.*",
         "symfony/intl": "5.0.*",
         "symfony/mailer": "5.0.*",
+        "symfony/messenger": "5.0.*",
         "symfony/monolog-bundle": "^3.1",
         "symfony/notifier": "5.0.*",
         "symfony/orm-pack": "*",
@@ -27,7 +34,9 @@
         "symfony/twig-pack": "*",
         "symfony/validator": "5.0.*",
         "symfony/web-link": "5.0.*",
-        "symfony/yaml": "5.0.*"
+        "symfony/webpack-encore-bundle": "^1.7",
+        "symfony/yaml": "5.0.*",
+        "wapmorgan/mp3info": "^0.0.5"
     },
     "require-dev": {
         "symfony/debug-pack": "*",
