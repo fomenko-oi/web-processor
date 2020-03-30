@@ -32,6 +32,8 @@
 
 <script>
     export default {
+        props: ['trackId'],
+
         data() {
             return {
                 url: '',
@@ -48,7 +50,7 @@
                 return this.error
             },
             songId() {
-                let data = this.url.match(/.*\/([0-9]{1,})/);
+                let data = this.url.match(/\/?([0-9]{1,})$/);
 
                 return data && data.length > 0 ? parseInt(data[1]) : null;
             }
@@ -80,6 +82,15 @@
                     });
             }
         },
+
+        created() {
+            if(!this.trackId) {
+                return;
+            }
+
+            this.url = '' + this.trackId;
+            this.onSubmit();
+        }
     }
 </script>
 

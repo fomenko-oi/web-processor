@@ -61,11 +61,11 @@ class YandexController extends AbstractController
     }
 
     /**
-     * @Route("/song", name="song")
+     * @Route("/song/{trackId?}", name="song")
      */
-    public function song()
+    public function song($trackId = null)
     {
-        return $this->render('app/main/index.html.twig', []);
+        return $this->render('app/main/index.html.twig', ['trackId' => $trackId]);
     }
 
     /**

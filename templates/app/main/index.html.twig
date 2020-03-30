@@ -56,7 +56,7 @@
                 <div class="card-body">
                     <h1>Yandex music song high quality downloader</h1>
 
-                    <yandex-download-song-component />
+                    <yandex-download-song-component {% if trackId %}:track-id='{{ trackId }}'{% endif %} />
                 </div>
             </div>
         </div>
