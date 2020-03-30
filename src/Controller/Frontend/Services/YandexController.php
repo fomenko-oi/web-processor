@@ -2,6 +2,9 @@
 
 namespace App\Controller\Frontend\Services;
 
+use App\Entity\Service\Yandex\Track;
+use App\Infrastructure\Flusher;
+use App\Repository\Service\Yandex\SongRepository;
 use App\Requests\Service\Yandex\Info as InfoCommand;
 use App\Requests\Service\Yandex\Download as DownloadCommand;
 use App\Resources\Service\Yandex\TrackResource;
@@ -31,12 +34,22 @@ class YandexController extends AbstractController
      * @var Serializer
      */
     private $serializer;
+    /**
+     * @var SongRepository
+     */
+    private SongRepository $songs;
+    /**
+     * @var Flusher
+     */
+    private Flusher $flusher;
 
-    public function __construct(ValidatorInterface $validator, SongService $songService, SerializerInterface $serializer)
+    public function __construct(ValidatorInterface $validator, SongService $songService, SerializerInterface $serializer, SongRepository $songs, Flusher $flusher)
     {
         $this->validator = $validator;
         $this->songService = $songService;
         $this->serializer = $serializer;
+        $this->songs = $songs;
+        $this->flusher = $flusher;
     }
 
     /**
@@ -73,7 +86,6 @@ class YandexController extends AbstractController
         }
 
         try {
-            // TODO cache this request
             $data = new TrackResource($this->songService->getTrackInfo($command->id));
 
             return $this->json(['success' => true, 'data' => $data->toArray()]);
@@ -100,17 +112,36 @@ class YandexController extends AbstractController
         }
 
         try {
-            $storageUrl = sprintf(sprintf($this->getParameter('storage_dir') . '/songs/%d', date('md')));
+            $track = $this->songService->getTrackInfo($command->id);
 
-            if(!file_exists($storageUrl)) {
-                mkdir($storageUrl);
-            }
+            $info = new Track(
+                Track\Id::next(),
+                $command->id,
+                new \DateTimeImmutable(),
+                $track->title,
+                $command->bitrate
+            );
 
-            $filePath = $this->songService->download($command, $storageUrl);
+            $this->songs->add($info);
+            $this->flusher->flush($info);
 
-            return $this->json(['success' => true, 'data' => [
-                'url' => $filePath
-            ]]);
+            return $this->json(['success' => true, 'data' => $info]);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * @Route("/song-status", name="song.status")
+     */
+    public function songStatus(Request $request)
+    {
+        $data = json_decode($request->getContent());
+
+        try {
+            $info = $this->songs->get(new Track\Id($data->id));
+
+            return $this->json(['success' => true, 'data' => $info]);
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()]);
         }

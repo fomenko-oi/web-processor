@@ -10,28 +10,44 @@ use App\Services\Music\Entity\Track\Track;
 use App\Services\Music\Yandex\Yandex;
 use duncan3dc\MetaAudio\Modules\Id3v2;
 use duncan3dc\MetaAudio\Tagger;
+use Psr\Cache\CacheItemPoolInterface;
 
 class SongService
 {
+    const TRACK_INFO_CACHE_TIME = '+1 day';
+    const TRACK_INFO_CACHE_KEY = 'yandex.track.%d.details';
+
     /**
      * @var Yandex
      */
     private $yandex;
+    /**
+     * @var CacheItemPoolInterface
+     */
+    private CacheItemPoolInterface $cache;
 
-    public function __construct(Yandex $yandex)
+    public function __construct(Yandex $yandex, CacheItemPoolInterface $cache)
     {
         // TODO move this to other place
         $yandex->loginByToken('AgAAAAAGGRgzAAG8Xje4LxlOtEGpu8jkCE8RGY8');
 
         $this->yandex = $yandex;
+        $this->cache = $cache;
     }
 
     public function getTrackInfo($url): Track
     {
-        // TODO add cache
         $segments = explode('/', $url);
+        $id = end($segments);
 
-        return $this->yandex->song->getSoundInfo(end($segments));
+        $item = $this->cache->getItem(sprintf(self::TRACK_INFO_CACHE_KEY, $id));
+
+        if(!($data = $item->get())) {
+            $item->set($this->yandex->song->getSoundInfo($id))->expiresAt(new \DateTimeImmutable(self::TRACK_INFO_CACHE_TIME));
+            $this->cache->save($item);
+        }
+
+        return $item->get();
     }
 
     public function getDownloadSources($url)
@@ -46,7 +62,7 @@ class SongService
         // TODO make search...
     }
 
-    public function download(Download $command, $storePath)
+    public function download(Download $command, $storePath, ?callable $downloadHandler = null): string
     {
         $sources = $this->getDownloadSources($command->id);
 
@@ -85,11 +101,11 @@ class SongService
             //$fileName .= ' - ' . $album->title;
         }
 
-        $this->yandex->downloadFile($link, $path = "{$storePath}/{$fileName}.mp3");
+        $this->yandex->downloadFile($link, $path = "{$storePath}/{$fileName}.mp3", $downloadHandler);
 
         $tagger = new Tagger();
 
-        $tagger->addModule(new Id3v2());
+        //$tagger->addModule(new Id3v2());
         //$tagger->addModule(new Id3v1());
         //$tagger->addDefaultModules();
 
@@ -100,7 +116,7 @@ class SongService
             ->setTitle($metaInfo->title)
         ;
 
-        return $path;
+        return preg_replace('/.*storage\//', '', $path);
     }
 
     protected function getId(string $url)

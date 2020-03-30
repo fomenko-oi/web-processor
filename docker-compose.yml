@@ -19,6 +19,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - queue-redis
       - mailer
   php-cli:
     build:
@@ -30,6 +31,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - queue-redis
       - mailer
     tty: true
   node:
@@ -38,6 +40,20 @@ services:
       - ./:/app
     working_dir: /app
     tty: true
+
+#  queue-worker:
+#    build:
+#      context: ./manager/docker
+#      dockerfile: php-cli.docker
+#    volumes:
+#      - ./:/app
+#      - composer:/root/.composer/cache
+#    depends_on:
+#      - postgres
+#      - redis
+#      - queue-redis
+#      - mailer
+#    command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && php bin/console messenger:consume async -vv"
 
   postgres:
     image: postgres:11.2-alpine
@@ -61,6 +77,10 @@ services:
       - '--save 300 10'
       - '--save 60 10000'
       - '--requirepass secret'
+  queue-redis:
+    image: redis:5.0-alpine
+    volumes:
+      - queue-redis:/data
 
   mailer:
     image: mailhog/mailhog
@@ -69,4 +89,5 @@ services:
 volumes:
   postgres:
   redis:
+  queue-redis:
   composer:

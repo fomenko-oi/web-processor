@@ -3,6 +3,7 @@ import transFilter from 'vue-trans';
 
 // install mixin for use named backend routes in vue
 require('@shared/Router/vue-router');
+window.dayjs = require('dayjs');
 
 window.axios = require('axios');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';

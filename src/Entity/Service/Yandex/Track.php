@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace App\Entity\Service\Yandex;
 
+use App\Entity\Service\Yandex\Track\Event\TrackCreated;
+use App\Entity\Service\Yandex\Track\Event\TrackDownloaded;
 use App\Entity\Service\Yandex\Track\Id;
+use App\Infrastructure\AggregateRoot;
+use App\Infrastructure\EventsTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(name="service_yandex_tracks")
  */
-class Track
+class Track implements AggregateRoot
 {
+    use EventsTrait;
+
     const STATUS_NEW = 'new';
     const STATUS_SUCCESS = 'success';
     const STATUS_PROGRESS = 'progress';
@@ -22,6 +28,10 @@ class Track
      * @ORM\Id()
      */
     private $id;
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $trackId;
     /**
      * @ORM\Column(type="string")
      */
@@ -33,7 +43,7 @@ class Track
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
-    private \DateTimeImmutable $finishedAt;
+    private ?\DateTimeImmutable $finishedAt = null;
     /**
      * @ORM\Column(type="string", length=16)
      */
@@ -43,16 +53,31 @@ class Track
      */
     private int $bitrate;
     /**
+     * @ORM\Column(type="integer")
+     */
+    private int $progress = 0;
+    /**
      * @ORM\Column(type="string", nullable=true)
      */
-    private string $path;
+    private ?string $path = null;
 
-    public function __construct(Id $id, \DateTimeImmutable $createdAt, string $name, int $bitrate)
+    public function __construct(Id $id, int $trackId, \DateTimeImmutable $createdAt, string $name, int $bitrate)
     {
         $this->id = $id;
+        $this->trackId = $trackId;
         $this->createdAt = $createdAt;
         $this->name = $name;
         $this->bitrate = $bitrate;
+        $this->status = self::STATUS_NEW;
+        $this->recordEvent(new TrackCreated($this->id, $this->trackId, $bitrate));
+    }
+
+    public function toProgress(): void
+    {
+        /*if($this->isProgress()) {
+            throw new \DomainException("The entity is already in progress.");
+        }*/
+        $this->status = self::STATUS_PROGRESS;
     }
 
     public function finish(\DateTimeImmutable $date, string $path)
@@ -60,8 +85,19 @@ class Track
         if($this->isSuccess()) {
             throw new \DomainException("The entity is already finished.");
         }
-        $this->date = $date;
+        $this->progress = 100;
+        $this->finishedAt = $date;
         $this->path = $path;
+        $this->status = self::STATUS_SUCCESS;
+        $this->recordEvent(new TrackDownloaded($this->id, $this->trackId, $this->bitrate, $path));
+    }
+
+    public function setProgress(int $progress)
+    {
+        if(!$this->isProgress()) {
+            throw new \DomainException('Progress percentage can be set only for entities in progress.');
+        }
+        $this->progress = $progress;
     }
 
     public function isNew(): bool
@@ -124,7 +160,7 @@ class Track
     /**
      * @return \DateTimeImmutable
      */
-    public function getFinishedAt(): \DateTimeImmutable
+    public function getFinishedAt(): ?\DateTimeImmutable
     {
         return $this->finishedAt;
     }
@@ -132,7 +168,7 @@ class Track
     /**
      * @param \DateTimeImmutable $finishedAt
      */
-    public function setFinishedAt(\DateTimeImmutable $finishedAt): self
+    public function setFinishedAt(?\DateTimeImmutable $finishedAt): self
     {
         $this->finishedAt = $finishedAt;
         return $this;
@@ -173,9 +209,17 @@ class Track
     }
 
     /**
+     * @return int
+     */
+    public function getProgress(): int
+    {
+        return $this->progress;
+    }
+
+    /**
      * @return string
      */
-    public function getPath(): string
+    public function getPath(): ?string
     {
         return $this->path;
     }

@@ -1,23 +1,42 @@
 <template>
-    <div>
-        <p>Pass URL in input below and download the song.</p>
-
-        <form :action="route('yandex.song.process')" class="mt-5" method="POST">
-            <div class="form-group">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="url" placeholder="https://music.yandex.ru/album/10130567/track/63591534">
-                    <input type="submit" class="btn btn-warning" value="Download">
-                </div>
-            </div>
-        </form>
+    <div class="pt-4">
+        <input-song-component @next-step="displayTrackInfo" v-if="isInputUrlComponent" />
+        <song-details-component v-if="isTrackInfoComponent" :details="trackDetails" />
     </div>
 </template>
 
 <script>
+    import InputSongComponent from "./Song/InputSongComponent";
+    import SongDetailsComponent from "./Song/SongDetailsComponent";
+
+    const INPUT_URL_COMPONENT = 1;
+    const DISPLAY_INFO_COMPONENT = 2;
+
     export default {
-        created() {
-            console.log('created song component')
-        }
+        data() {
+            return {
+                component: INPUT_URL_COMPONENT,
+                trackDetails: [],
+            }
+        },
+
+        computed: {
+            isInputUrlComponent() {
+                return this.component === INPUT_URL_COMPONENT
+            },
+            isTrackInfoComponent() {
+                return this.component === DISPLAY_INFO_COMPONENT
+            }
+        },
+
+        methods: {
+            displayTrackInfo(info) {
+                this.trackDetails = info;
+                this.component = DISPLAY_INFO_COMPONENT;
+            }
+        },
+
+        components: {SongDetailsComponent, InputSongComponent}
     }
 </script>
 

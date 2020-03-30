@@ -32,10 +32,11 @@ class Yandex
         $this->song = new Song($client);
     }
 
-    public function downloadFile(string $url, string $savePath)
+    public function downloadFile(string $url, string $savePath, ?callable $progressHandler = null)
     {
         $this->client->getClient()->get($url, [
-            'save_to' => $savePath
+            'save_to' => $savePath,
+            RequestOptions::PROGRESS => $progressHandler
         ]);
     }
 

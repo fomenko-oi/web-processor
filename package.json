@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "axios": "^0.19.2",
+        "dayjs": "^1.8.23",
         "vue": "^2.6.11",
         "vue-trans": "^0.1.1"
     }

@@ -8,6 +8,8 @@ doctrine:
 
         url: '%env(resolve:DATABASE_URL)%'
 
+        schema_filter: '~^(?!work_projects_tasks_seq)~'
+
         types:
             yandex_track_id: 'App\Entity\Service\Yandex\Track\IdType'
 
