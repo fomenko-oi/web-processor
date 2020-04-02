@@ -50,37 +50,35 @@
 {% endblock %}
 
 {% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: white">
+            <li class="breadcrumb-item"><a href="{{ app.request.getSchemeAndHttpHost }}">Services</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('yandex.index') }}">Yandex.music</a></li>
+
+            {% if trackId %}
+                <li class="breadcrumb-item active">{{ trackId }}</li>
+            {% endif %}
+        </ol>
+    </nav>
+
     <div class="row">
-        <div class="col-md-8">
-            <div class="card bg-warning text-black-50">
+        <div class="col-md-12">
+            <div class="card">
                 <div class="card-body">
-                    <div class="dashboard-info row">
-                        <div class="primary-text col-md-7">
-                            <h1 class="card-title">Yandex music downloader</h1>
-                            <p>That service helps you to download songs from music.yandex.ru online</p>
-                            <ul>
-                                <li>Download without registration and payments.</li>
-                                <li>High quality, 320 kbps songs.</li>
-                                <li>Download premium songs without payed accout.</li>
-                            </ul>
-                            <a href="{{ path('yandex.index') }}" class="btn btn-primary m-t-xs">Check it out!</a>
-                        </div>
-                        <div class="info-image col-md-5"></div>
-                    </div>
+                    <h1>High quality yandex music downloader</h1>
+
+                    <yandex-download-song-component {% if trackId %}:track-id-prop='{{ trackId }}'{% endif %} />
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card bg-info text-white">
+        <div class="col-md-12">
+            <div class="card">
                 <div class="card-body">
                     <div class="dashboard-info row">
-                        <div class="primary-text col-md-12">
-                            <h1 class="card-title">Write to us</h1>
-                            <p>If you have any advices or question, you are free to write email to us.</p>
-                            <p>We will response you as soon as possible.</p>
-
-                            <a href="{{ path('contacts') }}" class="btn btn-warning m-t-xs">Contact form</a>
+                        <div class="info-text col-md-12">
+                            <h5 class="card-title">About</h5>
+                            <p>Pass URL in input below and download the song.</p>
                         </div>
                     </div>
                 </div>

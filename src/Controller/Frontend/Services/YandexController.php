@@ -57,7 +57,7 @@ class YandexController extends AbstractController
      */
     public function index()
     {
-        return $this->render('app/main/index.html.twig', []);
+        return $this->render('app/services/yandex/index.html.twig', ['trackId' => null]);
     }
 
     /**
@@ -65,7 +65,7 @@ class YandexController extends AbstractController
      */
     public function song($trackId = null)
     {
-        return $this->render('app/main/index.html.twig', ['trackId' => $trackId]);
+        return $this->render('app/services/yandex/index.html.twig', ['trackId' => $trackId]);
     }
 
     /**
@@ -92,6 +92,22 @@ class YandexController extends AbstractController
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * @Route("/song-download/{fileId}", name="frontend.song.download")
+     */
+    public function download($fileId)
+    {
+        $song = $this->songs->get(new Track\Id($fileId));
+
+        $path = $this->getParameter('storage_dir') . '/' . $song->getPath();
+
+        if(!$song->isSuccess() || !file_exists($path)) {
+            throw new \DomainException('File unavailable.');
+        }
+
+        return $this->file($path);
     }
 
     /**
