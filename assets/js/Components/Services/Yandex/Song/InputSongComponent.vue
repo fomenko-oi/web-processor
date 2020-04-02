@@ -83,6 +83,13 @@
             }
         },
 
+        watch: {
+            trackId() {
+                this.url = '' + this.trackId;
+                this.onSubmit();
+            }
+        },
+
         created() {
             if(!this.trackId) {
                 return;

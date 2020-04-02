@@ -1,7 +1,7 @@
 <template>
     <div class="pt-4">
         <input-song-component @next-step="displayTrackInfo" v-if="isInputUrlComponent" :track-id="trackId" />
-        <song-details-component v-if="isTrackInfoComponent" :details="trackDetails" />
+        <song-details-component v-if="isTrackInfoComponent" :details="trackDetails" @request="onRequest" />
     </div>
 </template>
 
@@ -14,7 +14,7 @@
 
     export default {
         props: {
-            trackId: {
+            trackIdProp: {
                 type: Number,
                 required: false
             }
@@ -24,6 +24,7 @@
             return {
                 component: INPUT_URL_COMPONENT,
                 trackDetails: [],
+                trackId: this.trackIdProp
             }
         },
 
@@ -37,6 +38,10 @@
         },
 
         methods: {
+            onRequest(id) {
+                this.trackId = id;
+                this.component = INPUT_URL_COMPONENT;
+            },
             displayTrackInfo(info) {
                 this.$router.push({name: 'yandex.song', params: {song: info.id}});
 

@@ -16,8 +16,8 @@ class Artist extends BaseModel
     public $cover = [];
     public $genres = [];
 
-    public function getCoverUrl($width, $height): string
+    public function getCoverUrl($width, $height): ?string
     {
-        return sprintf(str_replace('%%', '%sx%s', $this->cover['uri']), $width, $height);
+        return $this->cover ? sprintf(str_replace('%%', '%sx%s', $this->cover['uri']), $width, $height) : null;
     }
 }

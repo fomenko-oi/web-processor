@@ -2,6 +2,7 @@
 
 namespace App\Services\Music\Common;
 
+use App\Services\Common\Guzzle\Middleware\ProxyPoolMiddleware;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Cookie\FileCookieJar;
@@ -142,6 +143,13 @@ abstract class AbstractClient
     public function getToken(): ?string
     {
         return $this->token;
+    }
+
+    public function pushMiddleware($middleware): self
+    {
+        $this->getClient()->getConfig('handler')->push($middleware);
+
+        return $this;
     }
 
     /**

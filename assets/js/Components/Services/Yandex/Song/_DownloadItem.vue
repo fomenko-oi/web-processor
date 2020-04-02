@@ -12,11 +12,11 @@
         </div>
 
         <div class="col-md-4" v-if="isSuccess">
-            <a class="btn btn-xs badge-success" :href="url">
+            <a class="btn btn-xs badge-success" :href="route('yandex.frontend.song.download', {fileId: id})">
                 <i class="material-icons hoverable" style="font-size: 14px;" title="Download">play_for_work</i>
             </a>
 
-            <a class="btn btn-xs badge-warning" :href="url">
+            <a class="btn btn-xs badge-warning" :href="url" target="_blank">
                 <i class="material-icons hoverable" style="font-size: 14px;" title="Play">play_arrow</i>
             </a>
         </div>
@@ -43,18 +43,22 @@
             },
             url() {
                 return `/storage/${this.item.path}`
+            },
+            id() {
+                return this.item.id.value
             }
         },
 
         methods: {
             async recheckStatus() {
-                await axios.post(this.route('yandex.song.status'), {id: this.item.id.value})
+                await axios.post(this.route('yandex.song.status'), {id: this.id})
                     .then(res => {
                         const item = res.data.data;
 
                         this.$emit('update', item);
 
                         if(item.status === STATUS_SUCCESS) {
+                            window.open(this.route('yandex.frontend.song.download', {fileId: this.id}));
                             return;
                         }
 

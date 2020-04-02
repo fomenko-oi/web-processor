@@ -3,6 +3,7 @@
 namespace App\Services\Music\Yandex;
 
 use App\Services\Music\Common\AbstractClient;
+use App\Services\Music\Yandex\Middleware\ReloginMiddleware;
 
 class BaseClient extends AbstractClient
 {
@@ -16,11 +17,11 @@ class BaseClient extends AbstractClient
     /**
      * @var string
      */
-    private $cookieDir;
+    protected $cookieDir;
     /**
      * @var string
      */
-    private $cacheDir = null;
+    protected $cacheDir = null;
 
     protected $device;
     protected $clientId;
@@ -39,6 +40,8 @@ class BaseClient extends AbstractClient
         $this->login = $login;
         $this->password = $password;
         $this->cookieDir = $cookieDir;
+
+        $this->pushMiddleware(ReloginMiddleware::create());
     }
 
     /**
@@ -80,9 +83,14 @@ class BaseClient extends AbstractClient
         $this->cookie_file = "{$this->cookieDir}/{$name}";
     }
 
-    public function setCacheDir(string $path): void
+    public function enableCache(string $cacheDir): void
     {
-        $this->cacheDir = $path;
+        $this->cacheDir = $cacheDir;
+    }
+
+    public function getCacheDir()
+    {
+        return $this->cacheDir;
     }
 
     public function isCacheEnabled(): bool

@@ -18,9 +18,6 @@ class Yandex
      */
     protected $client;
 
-    protected $login;
-    protected $password;
-
     /**
      * @var Song
      */
@@ -40,11 +37,26 @@ class Yandex
         ]);
     }
 
+    public function login(?string $token = null)
+    {
+        if($token) {
+            $this->client->setToken($token);
+            return;
+        }
+        //$this->client->isCacheEnabled()
+
+        dd($this->getToken());
+
+        $this->client->setToken($this->getToken());
+    }
+
     // TODO move the login to strategies
     public function loginByCredentials(string $login, string $password)
     {
         $this->login = $login;
         $this->password = $password;
+
+        dd($this->getToken());
 
         $this->client->setToken($this->getToken());
     }
@@ -133,17 +145,21 @@ class Yandex
                 'grant_type' => 'password',
                 'client_id' => $this->client->getClientId(),
                 'client_secret' => $this->client->getClientSecret(),
-                'username' => $this->login,
-                'password' => $this->password
+                'username' => $this->client->getLogin(),
+                'password' => $this->client->getPassword(),
+                'x_captcha_answer' => 106435,
+                'x_captcha_key' => '00AJCun5u6GJaDD9koRqI0ICEn7ciI1b',
             ],
             RequestOptions::HEADERS => [
-                'X-Yandex-Music-Client: WindowsPhone/3.17',
-                'User-Agent: Windows 10',
-                'Connection: Keep-Alive'
+                'X-Yandex-Music-Client' => 'WindowsPhone/3.17',
+                'User-Agent' => 'Windows 10',
+                'Connection' => 'Keep-Alive'
             ]
         ]);
 
         $data = \GuzzleHttp\json_decode($resp->getBody(), true);
+
+        dd($data);
 
         $token = $data['access_token'];
 

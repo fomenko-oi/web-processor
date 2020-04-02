@@ -1,77 +1,113 @@
 <template>
-    <div class="row">
-        <div class="col-lg-7 col-xl-7">
-            <div class="card file photo">
-                <div class="card-header file-icon">
-                    <img :src="coverUrl" alt="">
-                </div>
-                <div class="card-body file-info">
-                    <p>{{ title }}</p>
-                    <span class="file-info">ID: {{ details.id }}</span><br>
-                    <div class="file-info">
-                        Album:
-                        <span
-                                v-for="album in details.albums"
-                                class="badge badge-primary hoverable ml-1"
-                                data-toggle="popover"
-                                data-trigger="hover"
-                                data-html="true"
-                                :title="`Album ${album.title}`"
-                                :data-content="getAlbumTemplate(album)"
-                        >
-                            {{ album.title }} <em>({{ album.year }})</em>
-
-                            <i class="material-icons" style="font-size: 10px; padding-left: 4px;">info</i>
-                        </span>
-                    </div>
-
-                    <div class="file-info mt-1">
-                        Artist:
-                        <span
-                                v-for="artist in details.artists"
-                                class="badge badge-warning hoverable"
-                                data-toggle="popover"
-                                data-trigger="hover"
-                                data-html="true"
-                                :title="`Artist ${artist.name}`"
-                                :data-content="getArtistTemplate(artist)"
-                        >
-                            {{ artist.name }}
-
-                            <i class="material-icons" style="font-size: 10px; padding-left: 4px;">info</i>
-                        </span>
-                    </div><br>
+    <div>
+        <div class="row mb-3">
+            <div class="col-lg-7 col-xl-7">
+                <div class="new-comment">
+                    <form action="javascript: void(0)">
+                        <div class="input-group">
+                            <input
+                                    type="text"
+                                    name="comment"
+                                    :class="{
+                                    'form-control': true,
+                                    'is-invalid': url.length > 0 && isInvalidId,
+                                    'search-input': true
+                                }"
+                                    placeholder="https://music.yandex.ru/album/10130567/track/63591534"
+                                    v-model="url"
+                            >
+                            <div class="input-group-append">
+                                <button :class="{
+                                        'btn': true,
+                                        'btn-secondary': isButtonDisabled,
+                                        'btn-success': !isButtonDisabled
+                                    }"
+                                        type="button"
+                                        id="download-another-button"
+                                        :disabled="isButtonDisabled"
+                                        @click="$emit('request', songId)"
+                                >Download</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-5 col-xl-5">
-            <div class="card">
-                <div class="card-header file-icon">Download sources</div>
-                <div class="card-body file-info">
-                    <p>
-                        <a
-                                v-for="source in sources"
-                                @click.prevent="onDownloadTrack(source.bitrate)"
-                                href=""
-                                :class="{'pl-2': true, 'disabled': isDisabledBitrate(source.bitrate)}"
-                        >
-                            <span class="badge badge-success">{{ source.bitrate }} <em>kbps</em></span>
-                        </a>
-                    </p>
+        <div class="row">
+            <div class="col-lg-7 col-xl-7">
+                <div class="card file photo">
+                    <div class="card-header file-icon">
+                        <img :src="coverUrl" alt="">
+                    </div>
+                    <div class="card-body file-info">
+                        <p>{{ title }}</p>
+                        <span class="file-info">ID: {{ details.id }}</span><br>
+                        <div class="file-info">
+                            Album:
+                            <span
+                                    v-for="album in details.albums"
+                                    class="badge badge-primary hoverable ml-1"
+                                    data-toggle="popover"
+                                    data-trigger="hover"
+                                    data-html="true"
+                                    :title="`Album ${album.title}`"
+                                    :data-content="getAlbumTemplate(album)"
+                            >
+                            {{ album.title }} <em>({{ album.year }})</em>
+
+                            <i class="material-icons" style="font-size: 10px; padding-left: 4px;">info</i>
+                        </span>
+                        </div>
+
+                        <div class="file-info mt-1">
+                            Artist:
+                            <span
+                                    v-for="artist in details.artists"
+                                    class="badge badge-warning hoverable"
+                                    data-toggle="popover"
+                                    data-trigger="hover"
+                                    data-html="true"
+                                    :title="`Artist ${artist.name}`"
+                                    :data-content="getArtistTemplate(artist)"
+                            >
+                            {{ artist.name }}
+
+                            <i class="material-icons" style="font-size: 10px; padding-left: 4px;">info</i>
+                        </span>
+                        </div><br>
+                    </div>
                 </div>
             </div>
 
-            <div class="card" v-if="downloads.length > 0">
-                <div class="card-header file-icon">Downloading progress</div>
-                <div class="card-body">
-                    <download-item
-                            v-for="(item, index) in downloads"
-                            :item="item"
-                            :song="details"
-                            :key="item.id.value"
-                            @update="onUpdateItem(index, $event)"
-                    />
+            <div class="col-lg-5 col-xl-5">
+                <div class="card">
+                    <div class="card-header file-icon">Download sources</div>
+                    <div class="card-body file-info">
+                        <p>
+                            <a
+                                    v-for="source in sources"
+                                    @click.prevent="onDownloadTrack(source.bitrate)"
+                                    href=""
+                                    :class="{'pl-2': true, 'disabled': isDisabledBitrate(source.bitrate)}"
+                            >
+                                <span class="badge badge-success">{{ source.bitrate }} <em>kbps</em></span>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card" v-if="downloads.length > 0">
+                    <div class="card-header file-icon">Downloading progress</div>
+                    <div class="card-body">
+                        <download-item
+                                v-for="(item, index) in downloads"
+                                :item="item"
+                                :song="details"
+                                :key="item.id.value"
+                                @update="onUpdateItem(index, $event)"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,11 +125,23 @@
         data() {
             return {
                 downloads: [],
-                progress: []
+                progress: [],
+                url: this.details.id,
             }
         },
 
         computed: {
+            isButtonDisabled() {
+                return !this.url || this.isInvalidId || +this.details.id === +this.songId;
+            },
+            isInvalidId() {
+                return !this.songId
+            },
+            songId() {
+                let data = this.url.match(/\/?([0-9]{1,})$/);
+
+                return data && data.length > 0 ? parseInt(data[1]) : null;
+            },
             coverUrl() {
                 return `https://${this.details.cover}`
             },
