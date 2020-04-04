@@ -6,6 +6,7 @@
 parameters:
     storage_dir: '%kernel.project_dir%/public/storage'
     app_storage_dir: '%kernel.project_dir%/storage'
+    admin_email: '%env(ADMIN_EMAIL)%'
 
 services:
     # default configuration for services in *this* file
@@ -34,9 +35,26 @@ services:
             $cookieDir: '%kernel.project_dir%/storage/yandex'
             $proxy: '%env(YANDEX_PROXY)%'
 
+    YandexCommonClient:
+        class: App\Services\Music\Yandex\BaseClient
+        arguments:
+            $login: '%env(YANDEX_COMMON_LOGIN)%'
+            $password: '%env(YANDEX_COMMON_PASSWORD)%'
+            $cookieDir: '%kernel.project_dir%/storage/yandex'
+            $proxy: '%env(YANDEX_COMMON_PROXY)%'
+
+    YandexPremiumClient:
+        class: App\Services\Music\Yandex\BaseClient
+        arguments:
+            $login: '%env(YANDEX_LOGIN)%'
+            $password: '%env(YANDEX_PASSWORD)%'
+            $cookieDir: '%kernel.project_dir%/storage/yandex'
+            $proxy: '%env(YANDEX_PROXY)%'
+
     App\Services\Music\Yandex\Yandex:
         arguments:
-            $client: '@App\Services\Music\Yandex\BaseClient'
+            $downloader: '@YandexPremiumClient'
+            $parser: '@YandexCommonClient'
 
     App\Event\Dispatcher\EventDispatcher:
         class: App\Event\Dispatcher\MessengerEventDispatcher

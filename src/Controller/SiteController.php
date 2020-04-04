@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Main\Contact\Contact;
+use App\Entity\Main\Contact\Form;
 use App\Entity\Service\Yandex\Track;
 use App\Infrastructure\Flusher;
 use App\Repository\Service\Yandex\SongRepository;
@@ -16,6 +18,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -25,12 +28,44 @@ use Symfony\Component\Routing\Annotation\Route;
 class SiteController extends AbstractController
 {
     /**
+     * @var \Swift_Mailer
+     */
+    private \Swift_Mailer $mailer;
+
+    public function __construct(\Swift_Mailer $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+
+    /**
      * @Route("/contacts", name="contacts")
      */
-    public function contacts()
+    public function contacts(Request $request)
     {
-        return new Response('contacts');
-        //return $this->renderView('');
+        $form = $this->createForm(Form::class, $contact = new Contact());
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $message = (new \Swift_Message('New contact request'))
+                    ->setTo($this->getParameter('admin_email'))
+                    ->setBody($this->renderView('mail/contacts.html.twig', [
+                        'message' => $contact->message,
+                        'sender' => $contact->email,
+                    ]), 'text/html');
+
+                $this->mailer->send($message);
+                $this->addFlash('success', 'Your request was send successful.');
+
+                return $this->redirectToRoute('contacts');
+            } catch (\DomainException $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('app/main/contacts.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     /**
