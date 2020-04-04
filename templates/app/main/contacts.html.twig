@@ -41,19 +41,15 @@
             background-size: contain;
         }
     </style>
-
-    <script>
-        window.translations = {
-            'app.title': 'App trans title',
-        };
-    </script>
 {% endblock %}
 
 {% block content %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="background-color: white">
-            <li class="breadcrumb-item"><a href="{{ app.request.getSchemeAndHttpHost }}">Services</a></li>
-            <li class="breadcrumb-item">Contacts</li>
+            <li class="breadcrumb-item">
+                <a href="{{ app.request.getSchemeAndHttpHost }}">{{ 'services'|trans({}, 'app') }}</a>
+            </li>
+            <li class="breadcrumb-item">{{ 'contacts'|trans({}, 'app') }}</li>
         </ol>
     </nav>
 
@@ -61,11 +57,11 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h1>Contacts form</h1>
+                    <h1>{{ 'contact_form'|trans({}, 'app') }}</h1>
 
                     <div class="row">
                         <div class="info-text col-md-12">
-                            <p>Send question or suggestion to our team.</p>
+                            <p>{{ 'contact_form_message'|trans({}, 'app') }}</p>
 
                             {{ form(form) }}
                         </div>

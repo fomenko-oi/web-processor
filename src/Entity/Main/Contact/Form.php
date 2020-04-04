@@ -14,9 +14,12 @@ class Form extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('message', Type\TextareaType::class, ['label' => 'Message', 'attr' => ['rows' => 6]])
+            ->add('message', Type\TextareaType::class, [
+                'label' => 'message',
+                'attr' => ['rows' => 6],
+            ])
             ->add('email', Type\EmailType::class, ['label' => 'Email'])
-            ->add('submit', Type\SubmitType::class, ['label' => 'Submit'])
+            ->add('submit', Type\SubmitType::class, ['label' => 'submit'])
         ;
     }
 
@@ -24,6 +27,7 @@ class Form extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Contact::class,
+            'translation_domain' => 'app',
         ));
     }
 }
