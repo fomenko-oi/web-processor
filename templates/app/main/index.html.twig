@@ -52,7 +52,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-8">
-            <div class="card bg-warning text-black-50">
+            <div class="card bg-warning text-black">
                 <div class="card-body">
                     <div class="dashboard-info row">
                         <div class="primary-text col-md-7">
@@ -65,7 +65,11 @@
                             </ul>
                             <a href="{{ path('yandex.index') }}" class="btn btn-primary m-t-xs">Check it out!</a>
                         </div>
-                        <div class="info-image col-md-5"></div>
+                        <div class="col-md-4">
+                            <div class="media">
+                                <img src="{{ asset('images/cloud.png') }}" class="info-image" style="background-image: none">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
