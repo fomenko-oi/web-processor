@@ -8,6 +8,7 @@ use App\Services\Music\Entity\Track\Artist;
 use App\Services\Music\Entity\Track\Source;
 use App\Services\Music\Entity\Track\Track;
 use App\Services\Music\Yandex\Yandex;
+use duncan3dc\MetaAudio\Modules\Id3v1;
 use duncan3dc\MetaAudio\Modules\Id3v2;
 use duncan3dc\MetaAudio\Tagger;
 use Psr\Cache\CacheItemPoolInterface;
@@ -29,7 +30,14 @@ class SongService
     public function __construct(Yandex $yandex, CacheItemPoolInterface $cache)
     {
         // TODO move this to other place
-        $yandex->loginByToken('AgAAAAAGGRgzAAG8Xje4LxlOtEGpu8jkCE8RGY8');
+        $yandex->parser->setToken('AgAAAAAUTnpDAAG8XoAqOFtVpkjwqWRB_HKacX0');
+        $yandex->downloader->setToken('AgAAAAAGGRgzAAG8Xje4LxlOtEGpu8jkCE8RGY8');
+
+        /*$res = $yandex->parser->get('account/status');
+        dd($res);*/
+
+        //$res = $yandex->downloader->get('account/status');
+        //$res = $yandex->parser->get('account/status');
 
         $this->yandex = $yandex;
         $this->cache = $cache;
@@ -64,6 +72,25 @@ class SongService
 
     public function download(Download $command, $storePath, ?callable $downloadHandler = null): string
     {
+        $metaInfo = $this->getTrackInfo($command->id);
+
+        $fileName = $metaInfo->title;
+
+        /** @var Artist $artist */
+        if($artist = $metaInfo->artists[0] ?? null) {
+            $fileName .= ' - ' . $artist->name;
+        }
+        /** @var Album $album */
+        if($album = $metaInfo->albums[0] ?? null) {
+            //$fileName .= ' - ' . $album->title;
+        }
+        $fileName .= "_{$command->bitrate}";
+        $path = "{$storePath}/{$fileName}.mp3";
+
+        if(file_exists($path)) {
+            return preg_replace('/.*storage\//', '', $path);
+        }
+
         $sources = $this->getDownloadSources($command->id);
 
         if(!$sources || count($sources) === 0) {
@@ -77,10 +104,15 @@ class SongService
 
         /** @var Source $source */
         foreach ($sources as $source) {
-            if ($source->isMp3() === false || $source->bitrateInKbps !== $command->bitrate) {
+            if ($source->isMp3() === false) {
                 continue;
             }
 
+            if($source->bitrateInKbps !== $command->bitrate) {
+                // return the value immediately
+                $link = $this->yandex->song->getDirectLink($source->downloadInfoUrl, $source->codec, $source->bitrateInKbps);
+                break;
+            }
             $link = $this->yandex->song->getDirectLink($source->downloadInfoUrl, $source->codec, $source->bitrateInKbps);
         }
 
@@ -88,33 +120,27 @@ class SongService
             throw new \DomainException('Unable to parse song download link.');
         }
 
-        $metaInfo = $this->getTrackInfo($command->id);
-
-        $fileName = $metaInfo->title;
-
-        /** @var Artist $artist */
-        if($artist = $metaInfo->artists[0]) {
-            $fileName .= ' - ' . $artist->name;
-        }
-        /** @var Album $album */
-        if($album = $metaInfo->albums[0]) {
-            //$fileName .= ' - ' . $album->title;
-        }
-
-        $this->yandex->downloadFile($link, $path = "{$storePath}/{$fileName}.mp3", $downloadHandler);
+        $this->yandex->downloadFile($link, $path, $downloadHandler);
 
         $tagger = new Tagger();
 
         //$tagger->addModule(new Id3v2());
-        //$tagger->addModule(new Id3v1());
+        $tagger->addModule(new Id3v1());
         //$tagger->addDefaultModules();
 
-        $tagger->open($path)
-            ->setArtist($artist->name)
-            ->setAlbum($album->title)
-            ->setYear($album->year)
-            ->setTitle($metaInfo->title)
-        ;
+        $track = $tagger->open($path);
+
+        if($artist) {
+            $track->setTitle($artist->name);
+        }
+        if($album) {
+            $track->setAlbum($album->title);
+        }
+        if($year = $track->getYear()) {
+            $track->setYear($year);
+        }
+        $track->setTitle($metaInfo->title);
+        $track->setTrackNumber(1);
 
         return preg_replace('/.*storage\//', '', $path);
     }

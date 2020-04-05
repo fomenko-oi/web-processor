@@ -9,18 +9,15 @@ use App\Infrastructure\Flusher;
 use App\Repository\Service\Yandex\SongRepository;
 use App\Services\Common\Guzzle\Middleware\ProxyPoolMiddleware;
 use App\Services\Music\Yandex\BaseClient;
-use App\Services\Music\Yandex\Captcha\MlRecognizer\Recognize;
 use App\Services\Music\Yandex\Yandex;
 use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\RequestOptions;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route(options={"expose"=true})
@@ -31,10 +28,15 @@ class SiteController extends AbstractController
      * @var \Swift_Mailer
      */
     private \Swift_Mailer $mailer;
+    /**
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
 
-    public function __construct(\Swift_Mailer $mailer)
+    public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator)
     {
         $this->mailer = $mailer;
+        $this->translator = $translator;
     }
 
     /**
@@ -55,7 +57,7 @@ class SiteController extends AbstractController
                     ]), 'text/html');
 
                 $this->mailer->send($message);
-                $this->addFlash('success', 'Your request was send successful.');
+                $this->addFlash('success', $this->translator->trans('successful_request', [], 'app'));
 
                 return $this->redirectToRoute('contacts');
             } catch (\DomainException $e) {
@@ -66,37 +68,6 @@ class SiteController extends AbstractController
         return $this->render('app/main/contacts.html.twig', [
             'form' => $form->createView()
         ]);
-    }
-
-    /**
-     * @Route("/testprogress")
-     */
-    public function testprogress(CacheItemPoolInterface $cache)
-    {
-        set_time_limit(0);
-
-        $iteration = 0;
-
-        $client = new Client([
-            RequestOptions::PROGRESS => function($dl_total_size, $dl_size_so_far, $ul_total_size, $ul_size_so_far) use(&$iteration) {
-                $percent = $dl_total_size > 0 ? floor($dl_size_so_far / $dl_total_size * 100) : 0;
-
-                if($percent === 0) {
-                    return;
-                }
-
-                if($iteration % 10 === 0 || $percent === 100) {
-                    echo 'save to DB ' . $percent . PHP_EOL;
-                }
-
-                $iteration++;
-            },
-            'save_to' => dirname(__DIR__) . '/../public/test.mp3'
-        ]);
-
-        $client->get('http://nginx/storage/songs/330/Counting%20Stars%20-%20OneRepublic.mp3');
-
-        die('STOP');
     }
 
     /**
@@ -152,29 +123,6 @@ class SiteController extends AbstractController
         dd($yandex);
 
         $yandex->loginByCredentials($login, $password);
-
-        dd($res);
-    }
-
-    /**
-     * @Route("/testqueue")
-     */
-    public function testqueue(SongRepository $songs, Flusher $flusher)
-    {
-        //$song = $songs->get(new Track\Id('2b107c57-8691-4d72-a290-9cefd80798fb'));
-
-        $track = new Track(
-            Track\Id::next(),
-            100500,
-            new \DateTimeImmutable(),
-            'Test name',
-            320
-        );
-
-        $songs->add($track);
-        $flusher->flush($track);
-
-        dd($track);
     }
 
     /**

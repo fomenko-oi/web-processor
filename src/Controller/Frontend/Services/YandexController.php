@@ -168,7 +168,7 @@ class YandexController extends AbstractController
      */
     public function album()
     {
-        return $this->render('app/main/index.html.twig', []);
+        return $this->render('app/services/yandex/album.html.twig', []);
     }
 
     /**

@@ -50,41 +50,40 @@
 {% endblock %}
 
 {% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: white">
+            <li class="breadcrumb-item"><a href="{{ app.request.getSchemeAndHttpHost }}">Services</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('yandex.index') }}">Yandex.music</a></li>
+
+            <li class="breadcrumb-item active">Album downloading</li>
+        </ol>
+    </nav>
+
     <div class="row">
-        <div class="col-md-8">
-            <div class="card bg-info text-white">
+        <div class="col-md-12">
+            <div class="card">
                 <div class="card-body">
-                    <div class="dashboard-info row">
-                        <div class="col-md-7">
-                            <h2 class="card-title">{{ 'yandex_music_downloader'|trans({}, 'app') }}</h2>
-                            <p>{{ 'yandex_music_downloader_header'|trans({}, 'app') }}</p>
-                            <ul>
-                                <li>{{ 'yandex_music_downloader_message1'|trans({}, 'app') }}</li>
-                                <li>{{ 'yandex_music_downloader_message2'|trans({}, 'app') }}</li>
-                                <li>{{ 'yandex_music_downloader_message3'|trans({}, 'app') }}</li>
-                            </ul>
-                            <a href="{{ path('yandex.index') }}" class="btn btn-warning m-t-xs">{{ 'check_it'|trans({}, 'app') }}</a>
+                    <h1>Yandex music 1 click album downloader</h1>
+
+                    <div class="row mt-5 pt-5">
+                        <div class="col-md-2">
+                            <img src="{{ asset('images/g12.png') }}" class="info-image" style="background-image: none">
                         </div>
-                        <div class="col-md-4">
-                            <div class="media">
-                                <img src="{{ asset('images/cloud.png') }}" class="info-image" style="background-image: none">
-                            </div>
+                        <div class="col-md-6">
+                            <h2 class="mt-5">Coming soon...</h2>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card bg-warning text-black">
+        <div class="col-md-12">
+            <div class="card">
                 <div class="card-body">
                     <div class="dashboard-info row">
-                        <div class="primary-text col-md-12">
-                            <h1 class="card-title">{{ 'write_to_us'|trans({}, 'app') }}</h1>
-                            <p>{{ 'write_to_us_message2'|trans({}, 'app') }}</p>
-                            <p>{{ 'write_to_us_message2'|trans({}, 'app') }}</p>
-
-                            <a href="{{ path('contacts') }}" class="btn btn-primary m-t-xs">{{ 'contact_form'|trans({}, 'app') }}</a>
+                        <div class="info-text col-md-12">
+                            <h5 class="card-title">About</h5>
+                            <p>Pass URL in input below and download the song.</p>
                         </div>
                     </div>
                 </div>

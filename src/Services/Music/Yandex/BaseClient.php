@@ -36,6 +36,7 @@ class BaseClient extends AbstractClient
             $this->setProxy($proxy);
         }
         $this->setBaseDomain(Yandex::BASE_URL);
+        $this->setTimeout(4);
 
         $this->login = $login;
         $this->password = $password;

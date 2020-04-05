@@ -6,23 +6,25 @@ use App\Services\Music\Common\AbstractClient;
 use App\Services\Music\Entity\Track\Source;
 use App\Services\Music\Entity\Track\Track;
 use App\Services\Music\Yandex\BaseClient;
+use App\Services\Music\Yandex\Yandex;
+use App\UseCases\Song\SongService;
 use GuzzleHttp\RequestOptions;
 
 class Song
 {
     /**
-     * @var BaseClient
+     * @var SongService
      */
-    private $client;
+    private Yandex $parent;
 
-    public function __construct(AbstractClient $client)
+    public function __construct(Yandex $parent)
     {
-        $this->client = $client;
+        $this->parent = $parent;
     }
 
     public function getSoundInfo(int $id): Track
     {
-        $data = $this->client->get("tracks/{$id}");
+        $data = $this->parent->parser->get("tracks/{$id}");
 
         return Track::fromRequest($data['result'][0]);
     }
@@ -45,7 +47,7 @@ class Song
      */
     public function downloadInfo(int $id): array
     {
-        $response = $this->client->get("tracks/{$id}/download-info");
+        $response = $this->parent->downloader->get("tracks/{$id}/download-info");
 
         return Source::collection($response['result']);
     }
@@ -59,6 +61,6 @@ class Song
     }
 
     public function getXml($url) {
-        return $this->client->getClient()->get($url)->getBody();
+        return $this->parent->downloader->getClient()->get($url)->getBody();
     }
 }

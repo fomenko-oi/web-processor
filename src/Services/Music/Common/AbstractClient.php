@@ -130,6 +130,12 @@ abstract class AbstractClient
         $this->base_domain = $base_domain;
     }
 
+    public function setTimeout(int $timout): void
+    {
+        $this->timeout = $timout;
+        $this->connect_timeout = $timout;
+    }
+
     public function setHeaders(array $headers)
     {
         $this->additionalHeaders = $headers;
@@ -147,7 +153,7 @@ abstract class AbstractClient
 
     public function pushMiddleware($middleware): self
     {
-        $this->getClient()->getConfig('handler')->push($middleware);
+        //$this->getClient()->getConfig('handler')->push($middleware);
 
         return $this;
     }
@@ -161,12 +167,12 @@ abstract class AbstractClient
             $options = [
                 RequestOptions::HEADERS => [
                     //'Referer' => $this->getReferer() ?: $this->getBaseDomain(),
-                    'connect_timeout' => $this->connect_timeout,
-                    'timeout' => $this->timeout,
                     'User-Agent' => $this->getUserAgent(),
                     'Upgrade-Insecure-Requests' => 1,
                     'Connection' => 'keep-alive',
-                ]
+                ],
+                RequestOptions::TIMEOUT => $this->timeout,
+                RequestOptions::CONNECT_TIMEOUT => $this->connect_timeout,
             ];
 
             if($token = $this->getToken()) {

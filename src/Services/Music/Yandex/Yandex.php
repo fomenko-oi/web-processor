@@ -14,26 +14,34 @@ class Yandex
     const BASE_OATH_URL = 'https://oauth.yandex.ru';
 
     /**
-     * @var BaseClient
-     */
-    protected $client;
-
-    /**
      * @var Song
      */
     public $song;
+    /**
+     * @var BaseClient
+     */
+    public BaseClient $downloader;
+    /**
+     * @var BaseClient
+     */
+    public BaseClient $parser;
 
-    public function __construct(BaseClient $client)
+    public function __construct(BaseClient $downloader, BaseClient $parser)
     {
-        $this->client = $client;
-        $this->song = new Song($client);
+        $this->downloader = $downloader;
+        $this->parser = $parser;
+
+        $this->song = new Song($this);
     }
 
     public function downloadFile(string $url, string $savePath, ?callable $progressHandler = null)
     {
-        $this->client->getClient()->get($url, [
+        $this->downloader->getClient()->get($url, [
             'save_to' => $savePath,
-            RequestOptions::PROGRESS => $progressHandler
+            RequestOptions::PROGRESS => $progressHandler,
+            RequestOptions::CONNECT_TIMEOUT => null,
+            RequestOptions::TIMEOUT => null,
+            RequestOptions::READ_TIMEOUT => null,
         ]);
     }
 
@@ -63,7 +71,8 @@ class Yandex
 
     public function loginByToken(string $token)
     {
-        $this->client->setToken($token);
+        $this->downloader->setToken($token);
+        $this->parser->setToken($token);
     }
 
     /**
