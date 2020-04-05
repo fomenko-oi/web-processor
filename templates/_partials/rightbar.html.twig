@@ -22,10 +22,27 @@
                 <span class="material-design-hamburger__layer"></span>
             </a>
         </section>
-        <a class="navbar-brand" href="{{ app.request.getSchemeAndHttpHost }}">Web Processor</a>
+        <a class="navbar-brand" href="{{ path('index') }}">Web Processor</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <i class="material-icons">keyboard_arrow_down</i>
         </button>
+
+        <div class="dropdown col-md-3 offset-8">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ app.request.locale|upper }}
+                <img src="{{ asset('/images/langs/' ~ app.request.locale ~ '.svg') }}" alt="" width="24px" class="align-bottom">
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {% set currentRoute = app.request.get('_route') %}
+
+                {% for locale in supported_locales %}
+                    <a class="dropdown-item" href="{{ path(currentRoute, {_locale: locale}) }}">
+                        <b>{{ locale|upper }}</b>
+                        <img src="{{ asset('/images/langs/' ~ locale ~ '.svg') }}" alt="" width="24px" class="float-right">
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
 
         {#<div class="collapse navbar-collapse" id="navbarSupportedContent">
             <form class="form-inline my-2 my-lg-0 search">

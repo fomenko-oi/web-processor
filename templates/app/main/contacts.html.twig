@@ -15,7 +15,7 @@
     <meta property="og:image" content="{{ asset('images/cloud.png') }}" />
     <meta property="og:title" content="{{ title }}" />
     <meta property="og:description" content="{{ description }}" />
-    <meta property="og:locale" content="{{ app.request.uri }}" />
+    <meta property="og:locale" content="{{ app.request.locale }}" />
 
     <script type="application/ld+json">
         {
@@ -47,7 +47,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="background-color: white">
             <li class="breadcrumb-item">
-                <a href="{{ app.request.getSchemeAndHttpHost }}">{{ 'services'|trans({}, 'app') }}</a>
+                <a href="{{ path('index') }}">{{ 'services'|trans({}, 'app') }}</a>
             </li>
             <li class="breadcrumb-item">{{ 'contacts'|trans({}, 'app') }}</li>
         </ol>

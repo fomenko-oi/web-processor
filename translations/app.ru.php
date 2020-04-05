@@ -2,6 +2,8 @@
 
 return [
     'yandex_music_downloader' => 'Сервис скачивания песен с Яндекс Музыки',
+    'yandex_music_album' => 'Скачайте весь альбом с Яндекс Музыки в один клик',
+    'coming_soon' => 'В разработке...',
     'yandex_music_downloader_header' => 'Этот сервис поможет вам скачать песню с Яндекс Музыки онлайн',
     'yandex_music_downloader_message1' => 'Скачивай бесплатно и без регистрации.',
     'yandex_music_downloader_message2' => 'Песни высокого качества, и битрейта 320 kbps.',

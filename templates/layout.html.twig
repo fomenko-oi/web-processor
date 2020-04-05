@@ -43,6 +43,18 @@
 
     <meta name="csrf-token" content="somenotrandomtokenyet">
 
+    <script>
+        window.app = {
+            locale: '{{ app.request.locale }}'
+        }
+    </script>
+
+    <link rel="Canonical" href="{{ path('index') }}" />
+
+    {% for locale in supported_locales %}
+        <link rel="alternate" hreflang="{{ locale }}" href="{{ absolute_url(path('index', {_locale: locale})) }}" />
+    {% endfor %}
+
     {{ encore_entry_link_tags('app') }}
 
     {% block head %}{% endblock %}

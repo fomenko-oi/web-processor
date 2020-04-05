@@ -2,6 +2,8 @@
 
 return [
     'yandex_music_downloader' => 'Yandex music downloader',
+    'yandex_music_album' => 'Yandex music 1 click album downloader',
+    'coming_soon' => 'Coming soon...',
     'yandex_music_downloader_header' => 'That service helps you to download songs from music.yandex.ru online',
     'yandex_music_downloader_message1' => 'Download without registration and payments.',
     'yandex_music_downloader_message2' => 'High quality, 320 kbps songs.',
