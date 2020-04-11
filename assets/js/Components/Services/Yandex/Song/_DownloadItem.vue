@@ -12,7 +12,7 @@
         </div>
 
         <div class="col-md-4" v-if="isSuccess">
-            <a class="btn btn-xs badge-success" :href="route('yandex.frontend.song.download', {fileId: id})">
+            <a class="btn btn-xs badge-success" :href="route(`yandex.frontend.song.download.${this.$i18n.locale.toLowerCase()}`, {fileId: id})">
                 <i class="material-icons hoverable" style="font-size: 14px;" title="Download">play_for_work</i>
             </a>
 
@@ -51,14 +51,14 @@
 
         methods: {
             async recheckStatus() {
-                await axios.post(this.route('yandex.song.status'), {id: this.id})
+                await axios.post(this.route(`yandex.song.status.${this.$i18n.locale.toLowerCase()}`), {id: this.id})
                     .then(res => {
                         const item = res.data.data;
 
                         this.$emit('update', item);
 
                         if(item.status === STATUS_SUCCESS) {
-                            window.open(this.route('yandex.frontend.song.download', {fileId: this.id}));
+                            window.open(this.route(`yandex.frontend.song.download.${this.$i18n.locale.toLowerCase()}`, {fileId: this.id}));
                             return;
                         }
 

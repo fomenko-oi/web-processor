@@ -58,7 +58,37 @@
     {{ encore_entry_link_tags('app') }}
 
     {% block head %}{% endblock %}
-    {% block meta %}{% endblock %}
+    {% block meta %}
+        {% set title = 'index_title'|trans({}, 'app') %}
+        {% set description = 'index_description'|trans({}, 'app') %}
+        {% set keywords = 'index_keywords'|trans({}, 'app') %}
+        {% set site_name = 'Web processor' %}
+
+        <meta name="description" content="{{ description }}">
+
+        <meta property="og:url" content="{{ app.request.uri }}" />
+        <meta property="og:site_name" content="{{ site_name }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="{{ asset('images/cloud.png') }}" />
+        <meta property="og:title" content="{{ title }}" />
+        <meta property="og:description" content="{{ description }}" />
+        <meta property="og:locale" content="{{ app.request.locale }}" />
+
+        <script type="application/ld+json">
+            {
+                "@context": "http://schema.org",
+                "@type": "WebSite",
+                "url": "{{ app.request.uri }}",
+                "name": "{{ title }}",
+                "description": "{{ description }}",
+                "image": "{{ asset('images/cloud.png') }}",
+                "keywords": "{{ keywords }}",
+                "inLanguage": "{{ app.request.locale }}",
+                "dateCreated": 2020,
+                "isAccessibleForFree": true
+            }
+        </script>
+    {% endblock %}
 </head>
 <body>
 

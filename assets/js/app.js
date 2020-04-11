@@ -2,14 +2,16 @@
 import '../css/app.css';
 import './bootstrap';
 import Vue from 'vue';
-import VueRouter from 'vue-router'
+import VueRouter from 'vue-router';
+import i18n from './locale';
 import SongComponent from "@components/Services/Yandex/SongComponent";
 
 Vue.use(VueRouter);
 
 const router = new VueRouter({
     routes: [
-        { path: '/yandex/song/:song', component: SongComponent, name: 'yandex.song' },
+        {path: '/yandex/song/:song', component: SongComponent, name: 'yandex.song'},
+        {path: '/:lang/yandex/song/:song', component: SongComponent, name: 'yandex.song.local'},
     ],
     mode: 'history'
 });
@@ -18,5 +20,6 @@ Vue.component('yandex-download-song-component', SongComponent);
 
 new Vue({
     el: '#app',
-    router
+    router,
+    i18n
 });

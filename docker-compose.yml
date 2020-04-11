@@ -41,19 +41,20 @@ services:
     working_dir: /app
     tty: true
 
-#  queue-worker:
-#    build:
-#      context: ./manager/docker
-#      dockerfile: php-cli.docker
-#    volumes:
-#      - ./:/app
-#      - composer:/root/.composer/cache
-#    depends_on:
-#      - postgres
-#      - redis
-#      - queue-redis
-#      - mailer
-#    command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && php bin/console messenger:consume async -vv"
+  queue-worker:
+    build:
+      context: ./docker
+      dockerfile: php-cli.docker
+    volumes:
+      - ./:/app
+      - composer:/root/.composer/cache
+    depends_on:
+      - postgres
+      - redis
+      - queue-redis
+      - mailer
+    command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && php bin/console messenger:consume async -vv"
+    restart: always
 
   postgres:
     image: postgres:11.2-alpine

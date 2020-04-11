@@ -1,8 +1,8 @@
 {% extends 'layout.html.twig' %}
 
-{% set title = 'Yandex music hight quality sound downloader - Online' %}
-{% set description = 'Download sound from music.yandex.ru in high quality.' %}
-{% set keywords = 'Yandex music downloader, yandex music high quality song downloader' %}
+{% set title = 'service_yandex_title'|trans({}, 'app') %}
+{% set description = 'service_yandex_description'|trans({}, 'app') %}
+{% set keywords = 'service_yandex_keywords'|trans({}, 'app') %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -12,10 +12,10 @@
     <meta property="og:url" content="{{ app.request.uri }}" />
     <meta property="og:site_name" content="Yandex music downloader" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="{{ asset('images/cloud.png') }}" />
+    <meta property="og:image" content="{{ absolute_url(asset('images/cloud.png')) }}" />
     <meta property="og:title" content="{{ title }}" />
     <meta property="og:description" content="{{ description }}" />
-    <meta property="og:locale" content="{{ app.request.uri }}" />
+    <meta property="og:locale" content="{{ app.request.locale }}" />
 
     <script type="application/ld+json">
         {
@@ -24,7 +24,7 @@
             "url": "{{ app.request.uri }}",
             "name": "{{ title }}",
             "description": "{{ description }}",
-            "image": "{{ asset('images/cloud.png') }}",
+            "image": "{{ absolute_url(asset('images/cloud.png')) }}",
             "keywords": "{{ keywords }}",
             "inLanguage": "{{ app.request.locale }}",
             "dateCreated": 2020,
@@ -41,19 +41,13 @@
             background-size: contain;
         }
     </style>
-
-    <script>
-        window.translations = {
-            'app.title': 'App trans title',
-        };
-    </script>
 {% endblock %}
 
 {% block content %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="background-color: white">
-            <li class="breadcrumb-item"><a href="{{ app.request.getSchemeAndHttpHost }}">Services</a></li>
-            <li class="breadcrumb-item"><a href="{{ path('yandex.index') }}">Yandex.music</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('index') }}">{{ 'services'|trans({}, 'app') }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('yandex.index') }}">{{ 'yandex_music'|trans({}, 'app') }}</a></li>
 
             {% if trackId %}
                 <li class="breadcrumb-item active">{{ trackId }}</li>
@@ -65,7 +59,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h1>High quality yandex music downloader</h1>
+                    <h1>{{ 'yandex_music_song_title'|trans({}, 'app') }}</h1>
 
                     <yandex-download-song-component {% if trackId %}:track-id-prop='{{ trackId }}'{% endif %} />
                 </div>
@@ -77,8 +71,21 @@
                 <div class="card-body">
                     <div class="dashboard-info row">
                         <div class="info-text col-md-12">
-                            <h5 class="card-title">About</h5>
-                            <p>Pass URL in input below and download the song.</p>
+                            <h3>{{ 'about'|trans({}, 'app') }}</h3>
+                            <p style="font-size: 1.1em;">{{ 'yandex_music_song_about'|trans({}, 'app')|raw|nl2br }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card text-black">
+                <div class="card-body">
+                    <div class="dashboard-secondary row">
+                        <div class="secondary-text col-md-12">
+                            <h3>{{ 'why_we'|trans({}, 'app') }}</h3>
+                            <p style="font-size: 1.1em;">{{ 'why_we_content'|trans({}, 'app')|raw|nl2br }}</p>
                         </div>
                     </div>
                 </div>

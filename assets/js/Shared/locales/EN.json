@@ -1,0 +1,22 @@
+{
+  "yandex": {
+    "download_title":"Input URL or track ID in input below and download the song.",
+    "download_sources":"Download sources",
+    "download_progress":"Downloading progress"
+  },
+  "button": {
+    "download": "Download"
+  },
+  "common": {
+    "title": "Title",
+    "type": "Type",
+    "release_date": "Release date",
+    "year": "Year",
+    "name": "Name",
+    "album": "Album"
+  },
+  "error": {
+    "invalidId": "Id is invalid",
+    "common": "Something went wrong."
+  }
+}

@@ -3,7 +3,7 @@
         <div class="row mb-3">
             <div class="col-lg-7 col-xl-7">
                 <div class="new-comment">
-                    <form action="javascript: void(0)">
+                    <form action="javascript: void(0)" @submit.prevent="$emit('request', songId)">
                         <div class="input-group">
                             <input
                                     type="text"
@@ -26,7 +26,7 @@
                                         id="download-another-button"
                                         :disabled="isButtonDisabled"
                                         @click="$emit('request', songId)"
-                                >Download</button>
+                                >{{ $t('button.download') }}</button>
                             </div>
                         </div>
                     </form>
@@ -51,7 +51,7 @@
                                     data-toggle="popover"
                                     data-trigger="hover"
                                     data-html="true"
-                                    :title="`Album ${album.title}`"
+                                    :title="`${$t('common.album')} ${album.title}`"
                                     :data-content="getAlbumTemplate(album)"
                             >
                             {{ album.title }} <em>({{ album.year }})</em>
@@ -82,7 +82,7 @@
 
             <div class="col-lg-5 col-xl-5">
                 <div class="card">
-                    <div class="card-header file-icon">Download sources</div>
+                    <div class="card-header file-icon">{{ $t('yandex.download_sources') }}</div>
                     <div class="card-body file-info">
                         <p>
                             <a
@@ -98,7 +98,7 @@
                 </div>
 
                 <div class="card" v-if="downloads.length > 0">
-                    <div class="card-header file-icon">Downloading progress</div>
+                    <div class="card-header file-icon">{{ $t('yandex.download_progress') }}</div>
                     <div class="card-body">
                         <download-item
                                 v-for="(item, index) in downloads"
@@ -169,7 +169,9 @@
                 }
                 this.progress.push(bitrate);
 
-                axios.post(this.route('yandex.song.download'), {id: this.details.id, bitrate: bitrate})
+                axios.post(this.route(`yandex.song.download.${this.$i18n.locale.toLowerCase()}`), {
+                    id: this.details.id, bitrate: bitrate
+                })
                     .then(res => {
                         this.downloads.push(res.data.data);
                     })
@@ -178,21 +180,21 @@
                     })
             },
             getAlbumTemplate(album) {
-                let date = dayjs(album.release_date).format('DD MMMM YYYY');
+                let date = dayjs(album.release_date).format('DD MM YYYY');
 
                 return [
                     `ID: <b>${album.id}</b>`,
-                    `Title: <b>${album.title}</b>`,
-                    `Type: <b>${album.type}</b>`,
-                    `Release date: <b>${date}</b>`,
-                    `Year: <b>${album.year}</b>`,
+                    `${this.$t('common.title')}: <b>${album.title}</b>`,
+                    `${this.$t('common.type')}: <b>${album.type}</b>`,
+                    `${this.$t('common.release_date')}: <b>${date}</b>`,
+                    `${this.$t('common.year')}: <b>${album.year}</b>`,
                     `<img class="info-image" src="//${album.cover}">`,
                 ].join('<br>')
             },
             getArtistTemplate(artist) {
                 return [
                     `ID: <b>${artist.id}</b>`,
-                    `Name: <b>${artist.name}</b>`,
+                    `${this.$t('common.name')}: <b>${artist.name}</b>`,
                     `<img class="info-image" src="//${artist.cover}">`,
                 ].join('<br>')
             }

@@ -1,9 +1,9 @@
 <template>
     <div class="row">
         <div class="info-text col-md-6">
-            <p>Pass URL in input below and download the song.</p>
+            <p v-html="$t('yandex.download_title')"></p>
 
-            <form :action="route('yandex.song.process')" class="mt-5" method="POST" @submit.prevent="onSubmit">
+            <form :action="route(`yandex.song.process.${$i18n.locale.toLowerCase()}`)" class="mt-5" method="POST" @submit.prevent="onSubmit" @keyup.enter="onSubmit">
                 <div class="form-group">
                     <div class="input-group">
                         <input
@@ -16,11 +16,11 @@
 
                         <button class="btn btn-warning" type="button" :disabled="isButtonDisabled" @click="onSubmit">
                             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" v-if="loading"></span>
-                            <span v-else>Download</span>
+                            <span v-else>{{ $t('button.download') }}</span>
                         </button>
 
                         <span class="invalid-feedback" role="alert" v-if="isInvalidId">
-                            <strong>Id is invalid</strong>
+                            <strong>{{ $t('error.invalidId') }}</strong>
                         </span>
                     </div>
                 </div>
@@ -61,10 +61,10 @@
                 this.loading = true;
                 this.error = false;
 
-                axios.post(this.route('yandex.song.info'), {id: this.songId})
+                axios.post(this.route(`yandex.song.info.${this.$i18n.locale.toLowerCase()}`), {id: this.songId})
                     .then(res => {
                         if(res.data.success === false) {
-                            alert('Something went wrong.');
+                            alert(this.$t('error.common'));
                             return;
                         }
 

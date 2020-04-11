@@ -8,7 +8,7 @@ test-unit: app-test-unit
 test-unit-coverage: app-test-unit-coverage
 
 docker-up:
-	docker-compose up -d --scale queue-worker=1
+	docker-compose up -d --scale queue-worker=3
 
 docker-down:
 	docker-compose down --remove-orphans
@@ -21,6 +21,9 @@ docker-pull:
 
 docker-build:
 	docker-compose build
+
+docker-php-cli:
+	docker-compose exec php-cli /bin/bash
 
 app-clear:
 	docker run --rm -v ${PWD}:/app --workdir=/app alpine rm -f .ready

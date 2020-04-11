@@ -43,7 +43,19 @@
                 this.component = INPUT_URL_COMPONENT;
             },
             displayTrackInfo(info) {
-                this.$router.push({name: 'yandex.song', params: {song: info.id}});
+                const locale = window.app.locale;
+                const currentRoute = this.$router.currentRoute;
+
+                if(currentRoute.name !== 'yandex.song' || currentRoute.params.song !== info.id) {
+                    if(locale === 'en') {
+                        this.$router.push({name: 'yandex.song', params: {song: info.id}});
+                    } else {
+                        this.$router.push({name: 'yandex.song.local', params: {
+                            song: info.id,
+                            lang: locale
+                        }});
+                    }
+                }
 
                 this.trackDetails = info;
                 this.component = DISPLAY_INFO_COMPONENT;
