@@ -57,6 +57,9 @@ services:
             $downloader: '@YandexPremiumClient'
             $parser: '@YandexCommonClient'
 
+    App\Services\Music\ID3\Driver\TaggerDriver:
+        class: App\Services\Music\ID3\Driver\PhpTagger
+
     App\Event\Dispatcher\EventDispatcher:
         class: App\Event\Dispatcher\MessengerEventDispatcher
 

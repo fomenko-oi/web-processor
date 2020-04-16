@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Music\Entity\Track;
 
 use App\Services\Music\Entity\BaseModel;

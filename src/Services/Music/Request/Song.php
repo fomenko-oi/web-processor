@@ -3,6 +3,7 @@
 namespace App\Services\Music\Request;
 
 use App\Services\Music\Common\AbstractClient;
+use App\Services\Music\Entity\Track\Lyrics;
 use App\Services\Music\Entity\Track\Source;
 use App\Services\Music\Entity\Track\Track;
 use App\Services\Music\Yandex\BaseClient;
@@ -27,6 +28,14 @@ class Song
         $data = $this->parent->parser->get("tracks/{$id}");
 
         return Track::fromRequest($data['result'][0]);
+    }
+
+    public function getTrackLyrics(int $id): Lyrics
+    {
+        // TODO parse supplements -> video too
+        $data = $this->parent->parser->get("tracks/{$id}/supplement");
+
+        return Lyrics::fromRequest($data['result']['lyrics']);
     }
 
     // TODO write this method

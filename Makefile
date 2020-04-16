@@ -25,6 +25,9 @@ docker-build:
 docker-php-cli:
 	docker-compose exec php-cli /bin/bash
 
+assets-watch:
+	docker-compose exec node npm run watch
+
 app-clear:
 	docker run --rm -v ${PWD}:/app --workdir=/app alpine rm -f .ready
 

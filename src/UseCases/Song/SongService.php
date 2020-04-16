@@ -7,6 +7,8 @@ use App\Services\Music\Entity\Track\Album;
 use App\Services\Music\Entity\Track\Artist;
 use App\Services\Music\Entity\Track\Source;
 use App\Services\Music\Entity\Track\Track;
+use App\Services\Music\ID3\Driver\TaggerDriver;
+use App\Services\Music\ID3\Song;
 use App\Services\Music\Yandex\Yandex;
 use duncan3dc\MetaAudio\Modules\Id3v1;
 use duncan3dc\MetaAudio\Modules\Id3v2;
@@ -18,6 +20,9 @@ class SongService
     const TRACK_INFO_CACHE_TIME = '+1 day';
     const TRACK_INFO_CACHE_KEY = 'yandex.track.%d.details';
 
+    const TRACK_LYRICS_CACHE_TIME = '+1 month';
+    const TRACK_LYRICS_CACHE_KEY = 'yandex.track.%d.lyrics';
+
     /**
      * @var Yandex
      */
@@ -26,8 +31,12 @@ class SongService
      * @var CacheItemPoolInterface
      */
     private CacheItemPoolInterface $cache;
+    /**
+     * @var TaggerDriver
+     */
+    private TaggerDriver $tagger;
 
-    public function __construct(Yandex $yandex, CacheItemPoolInterface $cache)
+    public function __construct(Yandex $yandex, CacheItemPoolInterface $cache, TaggerDriver $tagger)
     {
         // TODO move this to other place
         $yandex->parser->setToken('AgAAAAAUTnpDAAG8XoAqOFtVpkjwqWRB_HKacX0');
@@ -41,6 +50,7 @@ class SongService
 
         $this->yandex = $yandex;
         $this->cache = $cache;
+        $this->tagger = $tagger;
     }
 
     public function getTrackInfo($url): Track
@@ -52,6 +62,21 @@ class SongService
 
         if(!($data = $item->get())) {
             $item->set($this->yandex->song->getSoundInfo($id))->expiresAt(new \DateTimeImmutable(self::TRACK_INFO_CACHE_TIME));
+            $this->cache->save($item);
+        }
+
+        return $item->get();
+    }
+
+    public function getTrackLyrics($url)
+    {
+        $segments = explode('/', $url);
+        $id = end($segments);
+
+        $item = $this->cache->getItem(sprintf(self::TRACK_LYRICS_CACHE_KEY, $id));
+
+        if(!($data = $item->get())) {
+            $item->set($this->yandex->song->getTrackLyrics($id))->expiresAt(new \DateTimeImmutable(self::TRACK_LYRICS_CACHE_TIME));
             $this->cache->save($item);
         }
 
@@ -122,25 +147,12 @@ class SongService
 
         $this->yandex->downloadFile($link, $path, $downloadHandler);
 
-        $tagger = new Tagger();
-
-        //$tagger->addModule(new Id3v2());
-        $tagger->addModule(new Id3v1());
-        //$tagger->addDefaultModules();
-
-        $track = $tagger->open($path);
-
-        if($artist) {
-            $track->setTitle($artist->name);
-        }
-        if($album) {
-            $track->setAlbum($album->title);
-        }
-        if($year = $track->getYear()) {
-            $track->setYear($year);
-        }
-        $track->setTitle($metaInfo->title);
-        $track->setTrackNumber(1);
+        $this->tagger->handle($path, new Song(
+            $metaInfo->title,
+            $album->title ?? null,
+            $artist->name ?? null,
+            $album->year ?? null
+        ));
 
         return preg_replace('/.*storage\//', '', $path);
     }

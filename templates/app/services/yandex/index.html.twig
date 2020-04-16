@@ -7,6 +7,10 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block meta %}
+    {% for locale in supported_locales %}
+        <link rel="alternate1" hreflang="{{ locale }}" href="{{ absolute_url(path('yandex.index', {_locale: locale})) }}" />
+    {% endfor %}
+
     <meta name="description" content="{{ description }}">
 
     <meta property="og:url" content="{{ app.request.uri }}" />
@@ -21,7 +25,7 @@
         {
             "@context": "http://schema.org",
             "@type": "WebSite",
-            "url": "{{ app.request.uri }}",
+            "url": "{{ absolute_url(path('yandex.index')) }}",
             "name": "{{ title }}",
             "description": "{{ description }}",
             "image": "{{ absolute_url(asset('images/cloud.png')) }}",

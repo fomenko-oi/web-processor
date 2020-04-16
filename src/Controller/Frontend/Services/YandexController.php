@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Frontend\Services;
 
 use App\Entity\Service\Yandex\Track;
@@ -7,6 +9,7 @@ use App\Infrastructure\Flusher;
 use App\Repository\Service\Yandex\SongRepository;
 use App\Requests\Service\Yandex\Info as InfoCommand;
 use App\Requests\Service\Yandex\Download as DownloadCommand;
+use App\Resources\Service\Yandex\LyricsResource;
 use App\Resources\Service\Yandex\TrackResource;
 use App\UseCases\Song\SongService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -66,6 +69,20 @@ class YandexController extends AbstractController
     public function song($trackId = null)
     {
         return $this->render('app/services/yandex/index.html.twig', ['trackId' => $trackId]);
+    }
+
+    /**
+     * @Route("/song/{trackId}/lyrics", name="song.lyrics")
+     */
+    public function lyrics($trackId)
+    {
+        try {
+            $data = new LyricsResource($this->songService->getTrackLyrics($trackId));
+
+            return $this->json(['success' => true, 'data' => $data->toArray()]);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 
     /**

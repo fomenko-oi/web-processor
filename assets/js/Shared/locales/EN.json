@@ -13,7 +13,9 @@
     "release_date": "Release date",
     "year": "Year",
     "name": "Name",
-    "album": "Album"
+    "album": "Album",
+    "artist": "Artist",
+    "load_lyrics": "Load lyrics"
   },
   "error": {
     "invalidId": "Id is invalid",

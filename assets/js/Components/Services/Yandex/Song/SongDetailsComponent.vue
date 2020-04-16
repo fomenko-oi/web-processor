@@ -44,7 +44,7 @@
                         <p>{{ title }}</p>
                         <span class="file-info">ID: {{ details.id }}</span><br>
                         <div class="file-info">
-                            Album:
+                            {{ $t('common.album') }}:
                             <span
                                     v-for="album in details.albums"
                                     class="badge badge-primary hoverable ml-1"
@@ -61,7 +61,7 @@
                         </div>
 
                         <div class="file-info mt-1">
-                            Artist:
+                            {{ $t('common.artist') }}:
                             <span
                                     v-for="artist in details.artists"
                                     class="badge badge-warning hoverable"
@@ -76,6 +76,12 @@
                             <i class="material-icons" style="font-size: 10px; padding-left: 4px;">info</i>
                         </span>
                         </div><br>
+
+                        <a class="btn btn-warning" @click="loadLyrics" :disabled="lyricsLoaded" v-if="details.lyrics_available && !lyrics">
+                            <span v-if="lyricsLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            {{ $t('common.load_lyrics') }}
+                        </a>
+                        <div class="col-md-12 alert alert-warning" v-if="lyrics" v-html="lyrics"></div>
                     </div>
                 </div>
             </div>
@@ -127,6 +133,9 @@
                 downloads: [],
                 progress: [],
                 url: this.details.id,
+                lyricsLoaded: false,
+                lyricsLoading: false,
+                lyrics: ''
             }
         },
 
@@ -157,6 +166,20 @@
         },
 
         methods: {
+            loadLyrics() {
+                this.lyricsLoading = true;
+                axios.post(this.route(`yandex.song.lyrics.${this.$i18n.locale.toLowerCase()}`, {trackId: this.details.id}))
+                    .then(res => {
+                        this.lyrics = res.data.data.text
+                        this.lyricsLoaded = true
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+                    .finally(() => {
+                        this.lyricsLoading = true;
+                    })
+            },
             isDisabledBitrate(bitrate) {
                 return this.progress.includes(bitrate);
             },
