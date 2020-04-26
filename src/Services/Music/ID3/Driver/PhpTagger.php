@@ -7,6 +7,7 @@ namespace App\Services\Music\ID3\Driver;
 use App\Services\Music\ID3\Song;
 use duncan3dc\MetaAudio\Modules\Id3v1;
 use duncan3dc\MetaAudio\Tagger;
+use duncan3dc\MetaAudio\Modules;
 
 class PhpTagger implements TaggerDriver
 {
@@ -14,7 +15,10 @@ class PhpTagger implements TaggerDriver
     {
         $tagger = new Tagger();
 
-        $tagger->addDefaultModules();
+        //$tagger->addDefaultModules();
+        $tagger->addModule(new Modules\Ape);
+        //$tagger->addModule(new Modules\Id3v2);
+        $tagger->addModule(new Modules\Id3v1);
 
         $track = $tagger->open($path);
 

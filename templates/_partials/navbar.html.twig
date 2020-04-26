@@ -7,10 +7,10 @@
 
             <li class="sidebar-title">{{ 'sources'|trans({}, 'app') }}</li>
             <li>
-                <a href="{{ path('yandex.index') }}"><i class="material-icons">text_format</i>{{ 'yandex_music'|trans({}, 'app') }}<i class="material-icons has-sub-menu">keyboard_arrow_left</i></a>
+                <a href="{{ path('yandex.song.index') }}"><i class="material-icons">text_format</i>{{ 'yandex_music'|trans({}, 'app') }}<i class="material-icons has-sub-menu">keyboard_arrow_left</i></a>
                 <ul class="sub-menu">
-                    <li><a href="{{ path('yandex.song') }}">{{ 'download_song'|trans({}, 'app') }}</a></li>
-                    <li><a href="{{ path('yandex.album') }}">{{ 'download_album'|trans({}, 'app') }}</a></li>
+                    <li><a href="{{ path('yandex.song.index') }}">{{ 'download_song'|trans({}, 'app') }}</a></li>
+                    <li><a href="{{ path('yandex.album.index') }}">{{ 'download_album'|trans({}, 'app') }}</a></li>
                 </ul>
             </li>
         </ul>

@@ -1,3 +1,4 @@
 For transform backend routes for frontend json:
 bin/console fos:js-routing:dump --format=json --target=assets/js/routes.json
 
+OR: make app-frontend-routes-build

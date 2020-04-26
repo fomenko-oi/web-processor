@@ -12,6 +12,7 @@ doctrine:
 
         types:
             yandex_track_id: 'App\Entity\Service\Yandex\Track\IdType'
+            yandex_album_id: 'App\Entity\Service\Yandex\Album\IdType'
 
     orm:
         auto_generate_proxy_classes: true

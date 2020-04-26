@@ -41,19 +41,13 @@
             background-size: contain;
         }
     </style>
-
-    <script>
-        window.translations = {
-            'app.title': 'App trans title',
-        };
-    </script>
 {% endblock %}
 
 {% block content %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="background-color: white">
             <li class="breadcrumb-item"><a href="{{ app.request.getSchemeAndHttpHost }}">Services</a></li>
-            <li class="breadcrumb-item"><a href="{{ path('yandex.index') }}">Yandex.music</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('yandex.song.index') }}">Yandex.music</a></li>
 
             <li class="breadcrumb-item active">Album downloading</li>
         </ol>
@@ -65,14 +59,7 @@
                 <div class="card-body">
                     <h1>{{ 'yandex_music_album'|trans({}, 'app') }}</h1>
 
-                    <div class="row mt-5 pt-5">
-                        <div class="col-md-2">
-                            <img src="{{ asset('images/g12.png') }}" class="info-image" style="background-image: none">
-                        </div>
-                        <div class="col-md-6">
-                            <h2 class="mt-5">{{ 'coming_soon'|trans({}, 'app') }}</h2>
-                        </div>
-                    </div>
+                    <yandex-download-album-component {% if albumId %}:album-id-prop='{{ albumId }}'{% endif %} />
                 </div>
             </div>
         </div>

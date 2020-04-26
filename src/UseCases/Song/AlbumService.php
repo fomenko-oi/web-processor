@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\UseCases\Song;
 
 use App\Requests\Service\Yandex\Download;
-use App\Services\Music\Entity\Track\Album;
+use App\Services\Music\Entity\Album\Album;
 use App\Services\Music\Entity\Track\Artist;
 use App\Services\Music\Entity\Track\Source;
 use App\Services\Music\Entity\Track\Track;
@@ -15,13 +15,10 @@ use duncan3dc\MetaAudio\Modules\Id3v2;
 use duncan3dc\MetaAudio\Tagger;
 use Psr\Cache\CacheItemPoolInterface;
 
-class SongService
+class AlbumService
 {
-    const TRACK_INFO_CACHE_TIME = '+1 day';
-    const TRACK_INFO_CACHE_KEY = 'yandex.track.%d.details';
-
-    const TRACK_LYRICS_CACHE_TIME = '+1 month';
-    const TRACK_LYRICS_CACHE_KEY = 'yandex.track.%d.lyrics';
+    const ALBUM_INFO_CACHE_TIME = '+1 day';
+    const ALBUM_INFO_CACHE_KEY = 'yandex.album.%d.details';
 
     /**
      * @var Yandex
@@ -42,57 +39,17 @@ class SongService
         $yandex->parser->setToken('AgAAAAAUTnpDAAG8XoAqOFtVpkjwqWRB_HKacX0');
         $yandex->downloader->setToken('AgAAAAAGGRgzAAG8Xje4LxlOtEGpu8jkCE8RGY8');
 
-        /*$res = $yandex->parser->get('account/status');
-        dd($res);*/
-
-        //$res = $yandex->downloader->get('account/status');
-        //$res = $yandex->parser->get('account/status');
-
         $this->yandex = $yandex;
         $this->cache = $cache;
-        $this->tagger = $tagger;
     }
 
-    public function getTrackInfo($url): Track
+    public function getAlbumInfo(int $id): Album
     {
-        $segments = explode('/', $url);
-        $id = end($segments);
+        return $this->cache->get(sprintf(self::ALBUM_INFO_CACHE_KEY, $id), function($item) use($id) {
+            $item->expiresAt(new \DateTimeImmutable(self::ALBUM_INFO_CACHE_TIME));
 
-        $item = $this->cache->getItem(sprintf(self::TRACK_INFO_CACHE_KEY, $id));
-
-        if(!($data = $item->get())) {
-            $item->set($this->yandex->song->getSoundInfo($id))->expiresAt(new \DateTimeImmutable(self::TRACK_INFO_CACHE_TIME));
-            $this->cache->save($item);
-        }
-
-        return $item->get();
-    }
-
-    public function getTrackLyrics($url)
-    {
-        $segments = explode('/', $url);
-        $id = end($segments);
-
-        $item = $this->cache->getItem(sprintf(self::TRACK_LYRICS_CACHE_KEY, $id));
-
-        if(!($data = $item->get())) {
-            $item->set($this->yandex->song->getTrackLyrics($id))->expiresAt(new \DateTimeImmutable(self::TRACK_LYRICS_CACHE_TIME));
-            $this->cache->save($item);
-        }
-
-        return $item->get();
-    }
-
-    public function getDownloadSources($url)
-    {
-        return $this->yandex->song->downloadInfo($this->getId($url));
-    }
-
-    public function search($query)
-    {
-        $res = $this->yandex->search('eminem');
-        //$res = $this->yandex->search->find('eminem');
-        // TODO make search...
+            return $this->yandex->album->getDetails($id);
+        });
     }
 
     public function download(Download $command, $storePath, ?callable $downloadHandler = null): string
@@ -109,7 +66,7 @@ class SongService
         if($album = $metaInfo->albums[0] ?? null) {
             //$fileName .= ' - ' . $album->title;
         }
-        $fileName .= "_{$command->bitrate} - vtools.pro";
+        $fileName .= "_{$command->bitrate}";
         $path = "{$storePath}/{$fileName}.mp3";
 
         if(file_exists($path)) {

@@ -12,6 +12,7 @@ use App\Services\Music\Yandex\BaseClient;
 use App\Services\Music\Yandex\Yandex;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Noxlogic\RateLimitBundle\Annotation\RateLimit;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -98,6 +99,14 @@ class SiteController extends AbstractController
     }
 
     /**
+     * @Route("/testtimer")
+     */
+    public function testTimer()
+    {
+
+    }
+
+    /**
      * @Route("/testloginclient")
      */
     public function testloginclient()
@@ -118,7 +127,7 @@ class SiteController extends AbstractController
         $client = new BaseClient($login, $password, $this->getParameter('app_storage_dir'), $proxy);
         //$client->setToken();
 
-        $yandex = new Yandex($client);
+        $yandex = new Yandex($client, $client);
         $yandex->login();
         dd($yandex);
 

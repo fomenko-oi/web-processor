@@ -3,6 +3,7 @@
 namespace App\Services\Music\Yandex;
 
 use App\Services\Music\Request\Song;
+use App\Services\Music\Request\Album;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ClientException;
@@ -32,6 +33,7 @@ class Yandex
         $this->parser = $parser;
 
         $this->song = new Song($this);
+        $this->album = new Album($this);
     }
 
     public function downloadFile(string $url, string $savePath, ?callable $progressHandler = null)

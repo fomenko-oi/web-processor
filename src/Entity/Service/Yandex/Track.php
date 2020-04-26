@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity\Service\Yandex;
 
+use App\Entity\Service\Yandex\Track\Event\AlbumCreated;
 use App\Entity\Service\Yandex\Track\Event\TrackCreated;
 use App\Entity\Service\Yandex\Track\Event\TrackDownloaded;
 use App\Entity\Service\Yandex\Track\Id;
 use App\Infrastructure\AggregateRoot;
 use App\Infrastructure\EventsTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -230,6 +232,23 @@ class Track implements AggregateRoot
     public function setPath(string $path): self
     {
         $this->path = $path;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTrackId(): int
+    {
+        return $this->trackId;
+    }
+
+    /**
+     * @param int $trackId
+     */
+    public function setTrackId(int $trackId): self
+    {
+        $this->trackId = $trackId;
         return $this;
     }
 }

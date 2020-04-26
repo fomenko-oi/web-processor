@@ -6,8 +6,8 @@
             <span class="badge badge-success" v-if="isSuccess">Finished</span>
             <span class="badge badge-info" v-if="isProgress">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    In progress - {{ item.progress }}%
-                </span>
+                In progress - {{ item.progress }}%
+            </span>
             <span class="badge badge-secondary" v-if="isNew">New</span>
         </div>
 

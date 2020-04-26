@@ -71,6 +71,12 @@ app-test-unit:
 app-test-unit-coverage:
 	docker-compose run --rm app-php-cli php bin/phpunit --testsuite=unit --coverage-clover var/clover.xml --coverage-html var/coverage
 
+app-frontend-routes-build:
+	docker-compose run --rm php-cli php bin/console fos:js-routing:dump --format=json --target=assets/js/routes.json
+
+app-cache-clear:
+	docker-compose run --rm php-cli php bin/console cache:clear
+
 build-production:
 	docker build --pull --file=manager/docker/production/nginx.docker --tag ${REGISTRY_ADDRESS}/app-nginx:${IMAGE_TAG} manager
 	docker build --pull --file=manager/docker/production/php-fpm.docker --tag ${REGISTRY_ADDRESS}/app-php-fpm:${IMAGE_TAG} manager

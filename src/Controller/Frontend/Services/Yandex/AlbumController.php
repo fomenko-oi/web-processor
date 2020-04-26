@@ -2,15 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Frontend\Services;
+namespace App\Controller\Frontend\Services\Yandex;
 
+use App\Entity\Service\Yandex\Album;
 use App\Entity\Service\Yandex\Track;
 use App\Infrastructure\Flusher;
+use App\Repository\Service\Yandex\AlbumRepository;
 use App\Repository\Service\Yandex\SongRepository;
 use App\Requests\Service\Yandex\Info as InfoCommand;
 use App\Requests\Service\Yandex\Download as DownloadCommand;
+use App\Resources\Service\Yandex\AlbumResource;
+use App\Resources\Service\Yandex\AlbumSongsResource;
 use App\Resources\Service\Yandex\LyricsResource;
 use App\Resources\Service\Yandex\TrackResource;
+use App\UseCases\Song\AlbumService;
 use App\UseCases\Song\SongService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,9 +26,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/yandex", name="yandex.", options={"expose"=true})
+ * @Route("/yandex/album", name="yandex.album.", options={"expose"=true})
  */
-class YandexController extends AbstractController
+class AlbumController extends AbstractController
 {
     /**
      * @var SongService
@@ -45,50 +50,42 @@ class YandexController extends AbstractController
      * @var Flusher
      */
     private Flusher $flusher;
+    /**
+     * @var AlbumService
+     */
+    private AlbumService $albumService;
+    /**
+     * @var AlbumRepository
+     */
+    private AlbumRepository $albums;
 
-    public function __construct(ValidatorInterface $validator, SongService $songService, SerializerInterface $serializer, SongRepository $songs, Flusher $flusher)
+    public function __construct(ValidatorInterface $validator, SongService $songService, AlbumService $albumService, SerializerInterface $serializer, SongRepository $songs, AlbumRepository $albums, Flusher $flusher)
     {
         $this->validator = $validator;
         $this->songService = $songService;
         $this->serializer = $serializer;
         $this->songs = $songs;
         $this->flusher = $flusher;
+        $this->albumService = $albumService;
+        $this->albums = $albums;
     }
 
     /**
-     * @Route("/", name="index")
+     * @Route("/song", name="process", methods={"POST"})
      */
-    public function index()
+    public function handleAlbum(Request $request)
     {
-        return $this->render('app/services/yandex/index.html.twig', ['trackId' => null]);
+        $storageUrl = $this->getParameter('storage_dir') . '/songs';
+
+        $filePath = $this->songService->download($request->get('url'), $storageUrl);
+
+        return $this->file($filePath);
     }
 
     /**
-     * @Route("/song/{trackId?}", name="song")
+     * @Route("/info", name="info", methods={"POST"})
      */
-    public function song($trackId = null)
-    {
-        return $this->render('app/services/yandex/index.html.twig', ['trackId' => $trackId]);
-    }
-
-    /**
-     * @Route("/song/{trackId}/lyrics", name="song.lyrics")
-     */
-    public function lyrics($trackId)
-    {
-        try {
-            $data = new LyricsResource($this->songService->getTrackLyrics($trackId));
-
-            return $this->json(['success' => true, 'data' => $data->toArray()]);
-        } catch (\Exception $e) {
-            return $this->json(['success' => false, 'error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * @Route("/song-info", name="song.info")
-     */
-    public function songInfo(Request $request)
+    public function albumInfo(Request $request)
     {
         /** @var InfoCommand $command */
         $command = $this->serializer->deserialize($request->getContent(), InfoCommand::class, 'json', [
@@ -103,7 +100,7 @@ class YandexController extends AbstractController
         }
 
         try {
-            $data = new TrackResource($this->songService->getTrackInfo($command->id));
+            $data = new AlbumSongsResource($this->albumService->getAlbumInfo($command->id));
 
             return $this->json(['success' => true, 'data' => $data->toArray()]);
         } catch (\Exception $e) {
@@ -112,7 +109,7 @@ class YandexController extends AbstractController
     }
 
     /**
-     * @Route("/song-download/{fileId}", name="frontend.song.download")
+     * @Route("/download/{fileId}", name="frontend.download")
      */
     public function download($fileId)
     {
@@ -128,9 +125,9 @@ class YandexController extends AbstractController
     }
 
     /**
-     * @Route("/song-download", name="song.download")
+     * @Route("/download", name="download")
      */
-    public function songDownload(Request $request)
+    public function albumDownload(Request $request)
     {
         /** @var DownloadCommand $command */
         $command = $this->serializer->deserialize($request->getContent(), DownloadCommand::class, 'json', [
@@ -145,34 +142,46 @@ class YandexController extends AbstractController
         }
 
         try {
-            $track = $this->songService->getTrackInfo($command->id);
+            $albumInfo = $this->albumService->getAlbumInfo($command->id);
 
-            $info = new Track(
-                Track\Id::next(),
-                $command->id,
+            $album = new Album(
+                Album\Id::next(),
+                $albumInfo->id,
                 new \DateTimeImmutable(),
-                $track->title,
+                $albumInfo->title,
                 $command->bitrate
             );
 
-            $this->songs->add($info);
-            $this->flusher->flush($info);
+            foreach ($albumInfo->volumes as $track) {
+                $info = new Track(
+                    Track\Id::next(),
+                    (int)$track->id,
+                    new \DateTimeImmutable(),
+                    $track->title,
+                    $command->bitrate
+                );
+                $album->addTrack($info);
+                $this->songs->add($info);
+            }
 
-            return $this->json(['success' => true, 'data' => $info]);
+            $this->albums->add($album);
+            $this->flusher->flush(...$album->getTracks());
+
+            return $this->json(['success' => true, 'data' => $album]);
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     /**
-     * @Route("/song-status", name="song.status")
+     * @Route("/status", name="status")
      */
-    public function songStatus(Request $request)
+    public function albumStatus(Request $request)
     {
         $data = json_decode($request->getContent());
 
         try {
-            $info = $this->songs->get(new Track\Id($data->id));
+            $info = $this->albums->get(new Album\Id($data->id));
 
             return $this->json(['success' => true, 'data' => $info]);
         } catch (\Exception $e) {
@@ -181,22 +190,12 @@ class YandexController extends AbstractController
     }
 
     /**
-     * @Route("/album", name="album")
+     * @Route("/{albumId?}", name="index")
      */
-    public function album()
+    public function album($albumId = null)
     {
-        return $this->render('app/services/yandex/album.html.twig', []);
-    }
-
-    /**
-     * @Route("/song", name="song.process", methods={"POST"})
-     */
-    public function handleSong(Request $request)
-    {
-        $storageUrl = $this->getParameter('storage_dir') . '/songs';
-
-        $filePath = $this->songService->download($request->get('url'), $storageUrl);
-
-        return $this->file($filePath);
+        return $this->render('app/services/yandex/album.html.twig', [
+            'albumId' => $albumId
+        ]);
     }
 }
