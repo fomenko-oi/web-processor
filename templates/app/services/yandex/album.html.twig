@@ -1,12 +1,25 @@
 {% extends 'layout.html.twig' %}
 
-{% set title = 'Yandex music hight quality sound downloader - Online' %}
-{% set description = 'Download sound from music.yandex.ru in high quality.' %}
-{% set keywords = 'Yandex music downloader, yandex music high quality song downloader' %}
+{% set title = 'service_yandex_album_title'|trans({}, 'app') %}
+{% set description = 'service_yandex_album_description'|trans({}, 'app') %}
+{% set keywords = 'service_yandex_album_keywords'|trans({}, 'app') %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block meta %}
+    {% set continue = false %}
+    {% for locale in supported_locales %}
+        {% if locale == app.request.locale %}
+            {% set continue = true %}
+        {% endif %}
+
+        {% if continue %}
+            {% set continue = false %}
+        {% else %}
+            <link rel="alternate" hreflang="{{ locale }}" href="{{ absolute_url(path('yandex.album.index', {_locale: locale})) }}" />
+        {% endif %}
+    {% endfor %}
+
     <meta name="description" content="{{ description }}">
 
     <meta property="og:url" content="{{ app.request.uri }}" />
@@ -46,10 +59,10 @@
 {% block content %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="background-color: white">
-            <li class="breadcrumb-item"><a href="{{ app.request.getSchemeAndHttpHost }}">Services</a></li>
-            <li class="breadcrumb-item"><a href="{{ path('yandex.song.index') }}">Yandex.music</a></li>
+            <li class="breadcrumb-item"><a href="{{ app.request.getSchemeAndHttpHost }}">{{ 'services'|trans({}, 'app') }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('yandex.album.index') }}">{{ 'yandex_music'|trans({}, 'app') }}</a></li>
 
-            <li class="breadcrumb-item active">Album downloading</li>
+            <li class="breadcrumb-item active">{{ 'album_downloading'|trans({}, 'app') }}</li>
         </ol>
     </nav>
 

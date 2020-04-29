@@ -5,7 +5,9 @@
     "download_progress":"Прогресс скачивания"
   },
   "button": {
-    "download": "Скачать"
+    "download": "Скачать",
+    "download_all": "Скачать все",
+    "save_all": "Сохранить все"
   },
   "common": {
     "title": "Название",
@@ -15,6 +17,9 @@
     "name": "Имя",
     "album": "Альбом",
     "artist": "Исполнитель",
+    "play": "Открыть",
+    "download": "Скачать",
+    "tracks": "Песни",
     "load_lyrics": "Загрузить текст песни"
   },
   "error": {

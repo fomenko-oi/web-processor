@@ -11,11 +11,11 @@
 
         <div class="col-md-3" v-if="isSuccess">
             <a class="btn btn-xs badge-success" :href="route(`yandex.song.frontend.download.${this.$i18n.locale.toLowerCase()}`, {fileId: id})">
-                <i class="material-icons hoverable" style="font-size: 14px;" title="Download">play_for_work</i>
+                <i class="material-icons hoverable" style="font-size: 14px;" :title="$t('common.download')">play_for_work</i>
             </a>
 
             <a class="btn btn-xs badge-warning" :href="downloadUrl" target="_blank">
-                <i class="material-icons hoverable" style="font-size: 14px;" title="Play">play_arrow</i>
+                <i class="material-icons hoverable" style="font-size: 14px;" :title="$t('common.play')">play_arrow</i>
             </a>
         </div>
     </a>

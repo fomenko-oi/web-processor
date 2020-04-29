@@ -5,7 +5,9 @@
     "download_progress":"Downloading progress"
   },
   "button": {
-    "download": "Download"
+    "download": "Download",
+    "download_all": "Download all",
+    "save_all": "Save all"
   },
   "common": {
     "title": "Title",
@@ -15,6 +17,9 @@
     "name": "Name",
     "album": "Album",
     "artist": "Artist",
+    "tracks": "Tracks",
+    "play": "Play",
+    "download": "Download",
     "load_lyrics": "Load lyrics"
   },
   "error": {

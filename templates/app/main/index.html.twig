@@ -7,6 +7,19 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block meta %}
+    {% set continue = false %}
+    {% for locale in supported_locales %}
+        {% if locale == app.request.locale %}
+            {% set continue = true %}
+        {% endif %}
+
+        {% if continue %}
+            {% set continue = false %}
+        {% else %}
+            <link rel="alternate" hreflang="{{ locale }}" href="{{ absolute_url(path('index', {_locale: locale})) }}" />
+        {% endif %}
+    {% endfor %}
+
     <meta name="description" content="{{ description }}">
 
     <meta property="og:url" content="{{ app.request.uri }}" />
@@ -62,8 +75,14 @@
                                 <li>{{ 'yandex_music_downloader_message1'|trans({}, 'app') }}</li>
                                 <li>{{ 'yandex_music_downloader_message2'|trans({}, 'app') }}</li>
                                 <li>{{ 'yandex_music_downloader_message3'|trans({}, 'app') }}</li>
+                                <li>{{ 'yandex_music_downloader_message4'|trans({}, 'app') }}</li>
                             </ul>
-                            <a href="{{ path('yandex.song.index') }}" class="btn btn-warning m-t-xs">{{ 'check_it'|trans({}, 'app') }}</a>
+                            <a href="{{ path('yandex.song.index') }}" class="btn btn-warning m-t-xs text-uppercase">
+                                {{ 'download_song'|trans({}, 'app') }}
+                            </a>
+                            <a href="{{ path('yandex.album.index') }}" class="btn btn-success m-t-xs text-uppercase">
+                                {{ 'download_album'|trans({}, 'app') }}
+                            </a>
                         </div>
                         <div class="col-md-4">
                             <div class="media">

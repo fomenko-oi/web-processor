@@ -7,8 +7,17 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block meta %}
+    {% set continue = false %}
     {% for locale in supported_locales %}
-        <link rel="alternate1" hreflang="{{ locale }}" href="{{ absolute_url(path('yandex.song.index', {_locale: locale})) }}" />
+        {% if locale == app.request.locale %}
+            {% set continue = true %}
+        {% endif %}
+
+        {% if continue %}
+            {% set continue = false %}
+        {% else %}
+            <link rel="alternate" hreflang="{{ locale }}" href="{{ absolute_url(path('yandex.song.index', {_locale: locale})) }}" />
+        {% endif %}
     {% endfor %}
 
     <meta name="description" content="{{ description }}">

@@ -15,8 +15,11 @@ return [
 
 This and much more you will find on our website.',
     'service_yandex_title' => 'Download sound from music.yandex.ru in high quality.',
+    'service_yandex_album_title' => 'Download full album high quality songs from music.yandex.ru in few clicks.',
     'service_yandex_description' => 'Download sound from music.yandex.ru in high quality.',
+    'service_yandex_album_description' => 'Download full album in high quality from Yandex Music. Download tracks as premium without premium, in few clicks, and in best quality - FAST and FREE.',
     'service_yandex_keywords' => 'Yandex music downloader, yandex music high quality song downloader',
+    'service_yandex_album_keywords' => 'Yandex music album downloader, yandex music high quality song album downloader, Yandex Music online album downloader',
     'yandex_music_downloader' => 'Yandex music downloader',
     'yandex_music_album' => 'Yandex music 1 click album downloader',
     'yandex_music_song_title' => 'High quality yandex music downloader',
@@ -28,6 +31,7 @@ Our site opens <b>free access</b> to tens of millions of tracks of Yandex Music.
     'yandex_music_downloader_message1' => 'Download without registration and payments.',
     'yandex_music_downloader_message2' => 'High quality, 320 kbps songs.',
     'yandex_music_downloader_message3' => 'Download premium songs without payed account.',
+    'yandex_music_downloader_message4' => 'Download full album by 1 click.',
     'check_it' => 'Check it out!',
     'write_to_us' => 'Write to us',
     'write_to_us_message1' => 'If you have any advices or question, you are free to write email to us.',
@@ -45,5 +49,6 @@ Our site opens <b>free access</b> to tens of millions of tracks of Yandex Music.
     'sources' => 'Sources',
     'yandex_music' => 'Yandex Music',
     'download_song' => 'Download song',
-    'download_album' => 'Download album'
+    'download_album' => 'Download album',
+    'album_downloading' => 'Album downloading',
 ];

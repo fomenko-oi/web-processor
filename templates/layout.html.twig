@@ -49,8 +49,6 @@
         }
     </script>
 
-    <link rel="Canonical" href="{{ path('index') }}" />
-
     {{ encore_entry_link_tags('app') }}
 
     {% block head %}{% endblock %}
@@ -60,8 +58,17 @@
         {% set keywords = 'index_keywords'|trans({}, 'app') %}
         {% set site_name = 'Web processor' %}
 
+        {% set continue = false %}
         {% for locale in supported_locales %}
-            <link rel="alternate" hreflang="{{ locale }}" href="{{ absolute_url(path('index', {_locale: locale})) }}" />
+            {% if locale == app.request.locale %}
+                {% set continue = true %}
+            {% endif %}
+
+            {% if continue %}
+                {% set continue = false %}
+            {% else %}
+                <link rel="alternate" hreflang="{{ locale }}" href="{{ absolute_url(path('index', {_locale: locale})) }}" />
+            {% endif %}
         {% endfor %}
 
         <meta name="description" content="{{ description }}">

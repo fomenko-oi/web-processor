@@ -43,7 +43,7 @@
                     <div class="card-body file-info">
                         <p>{{ title }}</p>
                         <span class="file-info">ID: {{ details.id }}</span><br>
-                        <span class="file-info">Release Date: {{ date }}</span><br>
+                        <span class="file-info">{{ $t('common.release_date') }}: {{ date }}</span><br>
 
                         <div class="file-info mt-1">
                             {{ $t('common.artist') }}:
@@ -68,16 +68,16 @@
             <div class="col-lg-5 col-xl-5">
                 <div class="card">
                     <div class="card-header file-icon">
-                        Tracks <span class="badge badge-primary">{{ details.track_count }}</span>
+                        {{ $t('common.tracks') }} <span class="badge badge-primary">{{ details.track_count }}</span>
 
                         <span class="badge badge-light float-right" v-if="isLoading">
                             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                         </span>
                         <span class="btn btn-xs badge-success float-right" @click="downloadAlbum" v-else-if="!checkingId">
-                            <i title="Download all" class="material-icons hoverable" style="font-size: 14px;">play_for_work</i>
+                            <i :title="$t('button.download_all')" class="material-icons hoverable" style="font-size: 14px;">play_for_work</i>
                         </span>
                         <span class="btn btn-xs badge-warning float-right" @click="saveAll" v-else>
-                            <i title="Save all" class="material-icons hoverable" style="font-size: 14px;">play_for_work</i>
+                            <i :title="$t('button.save_all')" class="material-icons hoverable" style="font-size: 14px;">play_for_work</i>
                         </span>
                     </div>
                     <div class="card-body file-info" style="margin: 0; padding: 0">
