@@ -1,3 +1,5 @@
+The project is for Yandex.Music songs and full albums downloading. Just paste a link in a search field, get common info about the song and download it in any quality.
+
 For run the project run command:
 `make init`
 
