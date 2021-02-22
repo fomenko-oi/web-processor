@@ -42,12 +42,6 @@ class SongService
         $yandex->parser->setToken('AgAAAAAUTnpDAAG8XoAqOFtVpkjwqWRB_HKacX0');
         $yandex->downloader->setToken('AgAAAAAGGRgzAAG8Xje4LxlOtEGpu8jkCE8RGY8');
 
-        /*$res = $yandex->parser->get('account/status');
-        dd($res);*/
-
-        //$res = $yandex->downloader->get('account/status');
-        //$res = $yandex->parser->get('account/status');
-
         $this->yandex = $yandex;
         $this->cache = $cache;
         $this->tagger = $tagger;
@@ -90,9 +84,7 @@ class SongService
 
     public function search($query)
     {
-        $res = $this->yandex->search('eminem');
-        //$res = $this->yandex->search->find('eminem');
-        // TODO make search...
+        return $this->yandex->search($query);
     }
 
     public function download(Download $command, $storePath, ?callable $downloadHandler = null): string

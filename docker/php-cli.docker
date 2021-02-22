@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y libpq-dev unzip \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo_pgsql
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet && composer self-update --1
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 

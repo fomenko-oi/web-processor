@@ -32,22 +32,14 @@ class Song
 
     public function getTrackLyrics(int $id): Lyrics
     {
-        // TODO parse supplements -> video too
         $data = $this->parent->parser->get("tracks/{$id}/supplement");
 
         return Lyrics::fromRequest($data['result']['lyrics']);
     }
 
-    // TODO write this method
-    public function getSupp()
+    public function getSupplement(int $trackId): array
     {
-        $res = $this->client->getClient()->get(self::BASE_URL . '/tracks/' . $id . '/supplement', [
-            RequestOptions::HEADERS => [
-                'Authorization' => 'OAuth ' . $this->token,
-            ],
-            RequestOptions::ALLOW_REDIRECTS => 0
-        ]);
-        //dd(json_decode($res->getBody(), true));
+        return $this->parent->parser->get("/tracks/{$trackId}/supplement");
     }
 
     /**
@@ -61,7 +53,8 @@ class Song
         return Source::collection($response['result']);
     }
 
-    public function getDirectLink($url, $codec = 'mp3', $suffix = "1") {
+    public function getDirectLink($url, $codec = 'mp3', $suffix = "1")
+    {
         $response = simplexml_load_string($this->getXml($url));
 
         $md5 = md5('XGRlBW9FXlekgbPrRHuSiA' . substr($response->path, 1) . $response->s);
@@ -69,7 +62,8 @@ class Song
         return "https://{$response->host}/get-{$codec}/{$md5}/{$response->ts}{$response->path}";
     }
 
-    public function getXml($url) {
+    public function getXml($url)
+    {
         return $this->parent->downloader->getClient()->get($url)->getBody();
     }
 }

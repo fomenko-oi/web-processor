@@ -67,35 +67,18 @@ class ReloginMiddleware
                     //die($request->getBody());
 
                     $data = \GuzzleHttp\json_decode($response->getBody(), true);
-                    dd($data);
-
-                    // TODO recognize captcha...
-
-                    $request = modify_request($request, [
-                        RequestOptions::BODY => http_build_query([
-                            'x_captcha_answer' => 123213,
-                            'x_captcha_key' => '',
-                        ]) . '&' . $request->getBody()->__toString()
-                    ]);
-
-                    dd($request->getBody()->__toString());
-
-                    //return $next($request, $options);
-
 
                     if($response->getStatusCode() === 403) {
                         $data = \GuzzleHttp\json_decode($response->getBody(), true);
-                        // if captcha
-                        // $data['x_captcha_url']
-                        // $data['x_captcha_key']
-                        // $data['error_description'] = CAPTCHA required
-                        // $data['error'] = 403
 
-                        dd($request);
-                        // Forbidden status
-                        dd(\GuzzleHttp\json_decode($response->getBody(), true));
+                        // TODO add captcha recognize
+                        $request = modify_request($request, [
+                            RequestOptions::BODY => http_build_query([
+                                    'x_captcha_answer' => 123213,
+                                    'x_captcha_key' => '',
+                                ]) . '&' . $request->getBody()->__toString()
+                        ]);
                     }
-                    dd($response);
 
                     return $response;
                 }/*,

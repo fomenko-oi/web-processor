@@ -16,6 +16,7 @@
 ###< symfony/phpunit-bridge ###
 .idea
 .ready
+.env
 
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
